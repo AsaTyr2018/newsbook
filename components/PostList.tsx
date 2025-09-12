@@ -3,9 +3,25 @@ interface Post {
   title: string;
   category?: { name: string } | null;
   tags: { id: number; name: string }[];
+  authorId: number;
 }
 
-const PostList = ({ posts, onDelete }: { posts: Post[]; onDelete: (id: number) => void }) => {
+interface User {
+  id: number;
+  role: string;
+}
+
+const PostList = ({
+  posts,
+  onDelete,
+  onEdit,
+  currentUser,
+}: {
+  posts: Post[];
+  onDelete: (id: number) => void;
+  onEdit: (post: Post) => void;
+  currentUser: User;
+}) => {
   if (!posts.length) return <p>Keine Beiträge vorhanden.</p>;
   return (
     <ul className="flex flex-col gap-2">
@@ -20,12 +36,24 @@ const PostList = ({ posts, onDelete }: { posts: Post[]; onDelete: (id: number) =
               </p>
             )}
           </div>
-          <button
-            onClick={() => onDelete(post.id)}
-            className="text-red-600"
-          >
-            Löschen
-          </button>
+          <div className="flex gap-2">
+            {(currentUser.role === 'ADMIN' || currentUser.id === post.authorId) && (
+              <button
+                onClick={() => onEdit(post)}
+                className="text-blue-600"
+              >
+                Bearbeiten
+              </button>
+            )}
+            {(currentUser.role === 'ADMIN' || currentUser.id === post.authorId) && (
+              <button
+                onClick={() => onDelete(post.id)}
+                className="text-red-600"
+              >
+                Löschen
+              </button>
+            )}
+          </div>
         </li>
       ))}
     </ul>
