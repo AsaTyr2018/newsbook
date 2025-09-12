@@ -1,37 +1,55 @@
 # NewsBlogCMS
 
-NewsBlogCMS ist ein moderner News-Blog mit Next.js, Tailwind CSS, Prisma und PostgreSQL. Über eine Adminoberfläche lassen sich Beiträge, Kategorien, Tags und Kommentare verwalten.
+NewsBlogCMS ist eine umfassende News-Blog-Anwendung auf Basis von Next.js, Tailwind CSS, Prisma und PostgreSQL. Über eine responsive Benutzeroberfläche und ein geschütztes Admin-Panel lassen sich Beiträge, Kategorien, Tags und Kommentare komfortabel verwalten.
 
-## Benutzerrollen
+## Funktionen
 
-Das System unterstützt mehrere Rollen:
+### Benutzeroberfläche
+- Beitragsansicht unter `/news/[slug]` mit Titel, Datum, Inhalt, Kategorie, Tags und Kommentaren
+- Kommentarformular mit optionaler Moderation
+- Navigation über Kategorien (`/category/[slug]`) und Tags (`/tag/[slug]`)
+- Volltextsuche sowie Filterung nach Kategorie oder Tag
+- Responsive Layout mit optionalem Dark Mode
 
-- **Gast** – kann lesen und Kommentare verfassen (Moderationsfreigabe erforderlich)
-- **User** – kann lesen und Kommentare ohne Freigabe schreiben
-- **Autor** – kann zusätzlich Artikel verfassen
-- **Moderator** – kann Kommentare freigeben, ablehnen oder löschen
-- **Admin** – volle Rechte
-
-Anmeldungen können im Backend deaktiviert oder aktiviert werden.
+### Administrationsbereich
+- Anmeldung über NextAuth (Admin-only)
+- Erstellen, Bearbeiten, Löschen und Vorschau von Beiträgen im TipTap-Editor
+- Automatische oder manuelle Slug-Generierung mit Kategorie- und Tag-Zuweisung
+- Verwaltung von Kategorien und Tags
+- Moderation und Löschung von Kommentaren
 
 ## Installation
 
-Führe das Setup-Skript aus, um Abhängigkeiten zu installieren, die `.env`-Datei anzulegen, PostgreSQL einzurichten und die Datenbank zu migrieren sowie mit Beispieldaten zu füllen:
+Voraussetzungen: [Node.js](https://nodejs.org/) und [PostgreSQL](https://www.postgresql.org/).
 
 ```bash
+git clone <REPOSITORY_URL>
+cd newsbook
 ./scripts/setup.sh
 ```
 
-## Entwicklung starten
+Das Setup-Skript installiert alle Abhängigkeiten, erstellt die `.env`, richtet die Datenbank ein und spielt Seed-Daten ein.
+
+## Entwicklung
 
 ```bash
 npm run dev
--> Für extern
+# oder für externen Zugriff
 npx next dev -H 0.0.0.0 -p 3000
 ```
 
-Die App läuft anschließend unter `http://localhost:3000`.
+Die Anwendung ist anschließend unter `http://localhost:3000` erreichbar.
 
 ## Admin-Testkonto
 
-Der Seed legt einen Admin-Benutzer mit Benutzername `admin` und Passwort `admin` an. Damit kannst du dich im Admin-Bereich unter `/admin` anmelden.
+Der Seed erzeugt einen Admin-Benutzer mit Benutzername `admin` und Passwort `admin`. Der Admin-Bereich ist unter `/admin` verfügbar.
+
+## Rollenmodell
+
+- **Gast** – kann lesen und Kommentare verfassen (Moderation erforderlich)
+- **User** – kann lesen und Kommentare ohne Freigabe schreiben
+- **Autor** – kann Artikel erstellen
+- **Moderator** – kann Kommentare freigeben, ablehnen oder löschen
+- **Admin** – uneingeschränkte Rechte
+
+Anmeldungen können im Backend deaktiviert oder aktiviert werden.
