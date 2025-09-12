@@ -7,6 +7,7 @@ const AdminSettings = () => {
   const [locale, setLocale] = useState('');
   const [timezone, setTimezone] = useState('');
   const [saved, setSaved] = useState(false);
+  const [updating, setUpdating] = useState(false);
 
   useEffect(() => {
     fetch('/api/settings')
@@ -54,6 +55,18 @@ const AdminSettings = () => {
         />
         <button className="bg-blue-500 text-white p-2">Speichern</button>
         {saved && <p className="text-green-600">Gespeichert!</p>}
+        <button
+          type="button"
+          onClick={async () => {
+            setUpdating(true);
+            await fetch('/api/update', { method: 'POST' });
+            setUpdating(false);
+          }}
+          className="bg-gray-500 text-white p-2"
+        >
+          Update
+        </button>
+        {updating && <p className="text-blue-600">Aktualisiere...</p>}
       </form>
     </div>
   );

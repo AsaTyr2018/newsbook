@@ -1,20 +1,27 @@
 import type { AppProps } from 'next/app';
 import { SessionProvider } from 'next-auth/react';
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 import Head from 'next/head';
 import '../styles/globals.css';
 import NavBar from '../components/NavBar';
 import { SiteContext } from '../lib/SiteContext';
 import { ThemeContext, Theme } from '../lib/ThemeContext';
+import Maintenance from '../components/Maintenance';
 
 export default function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
+  const router = useRouter();
   const [siteName, setSiteName] = useState('NewsBlogCMS');
   const [theme, setTheme] = useState<Theme>('light');
+  const [maintenance, setMaintenance] = useState(false);
 
   useEffect(() => {
     fetch('/api/settings')
       .then((res) => res.json())
-      .then((data) => setSiteName(data.siteName || 'NewsBlogCMS'))
+      .then((data) => {
+        setSiteName(data.siteName || 'NewsBlogCMS');
+        setMaintenance(data.maintenance === 'true');
+      })
       .catch(() => {});
   }, []);
 
@@ -40,6 +47,10 @@ export default function MyApp({ Component, pageProps: { session, ...pageProps } 
       window.localStorage.setItem('theme', newTheme);
     }
   };
+
+  if (maintenance) {
+    return <Maintenance currentPath={router.asPath} />;
+  }
 
   return (
     <SessionProvider session={session}>
