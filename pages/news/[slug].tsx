@@ -23,7 +23,13 @@ const NewsPost = ({ post }: PostPageProps) => {
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-2">{post.title}</h1>
       <p className="text-sm text-gray-500 mb-4">
-        {new Date(post.createdAt).toLocaleDateString()} | Autor: {post.author?.name || post.author?.username || 'Unbekannt'} | Kategorie: {post.category?.name || 'Keine'}
+        {new Date(post.createdAt).toLocaleDateString()} | Autor: {post.author ? (
+          <Link href={`/user/${post.author.username}`} className="text-blue-600">
+            {post.author.name || post.author.username}
+          </Link>
+        ) : (
+          'Unbekannt'
+        )} | Kategorie: {post.category?.name || 'Keine'}
       </p>
       {post.tags.length > 0 && (
         <p className="text-sm mb-4">Tags: {post.tags.map((t) => t.name).join(', ')}</p>
