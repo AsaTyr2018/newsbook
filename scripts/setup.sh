@@ -70,8 +70,12 @@ if ! $ADMIN_PSQL -tAc "SELECT 1 FROM pg_database WHERE datname='$DB_NAME'" | gre
   $ADMIN_PSQL -c "CREATE DATABASE \"$DB_NAME\" OWNER \"$DB_USER\";" >/dev/null
 fi
 
-### Run Prisma migrations and seed
-npx prisma migrate deploy >/dev/null
+### Apply Prisma schema and seed data
+if [ -d prisma/migrations ] && [ "$(ls -A prisma/migrations 2>/dev/null)" ]; then
+  npx prisma migrate deploy >/dev/null
+else
+  npx prisma db push >/dev/null
+fi
 npm run prisma:seed >/dev/null
 
 echo "Setup complete. Database is ready."
