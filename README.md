@@ -23,7 +23,7 @@ NewsBlogCMS ist eine umfassende News-Blog-Anwendung auf Basis von Next.js, Tailw
 Voraussetzungen: [Node.js](https://nodejs.org/) und [PostgreSQL](https://www.postgresql.org/).
 
 ```bash
-git clone <REPOSITORY_URL>
+git clone https://github.com/AsaTyr2018/newsbook/
 cd newsbook
 ./scripts/setup.sh
 ```
