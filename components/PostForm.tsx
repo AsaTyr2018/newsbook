@@ -10,7 +10,23 @@ interface Tag {
   name: string;
 }
 
-const PostForm = ({ onSuccess }: { onSuccess: () => void }) => {
+interface Post {
+  id: number;
+  title: string;
+  content: string;
+  categoryId?: number;
+  tags: Tag[];
+}
+
+const PostForm = ({
+  onSuccess,
+  post,
+  onCancel,
+}: {
+  onSuccess: () => void;
+  post?: Post | null;
+  onCancel?: () => void;
+}) => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [categoryId, setCategoryId] = useState<number | undefined>();
@@ -27,13 +43,31 @@ const PostForm = ({ onSuccess }: { onSuccess: () => void }) => {
       .then(setTags);
   }, []);
 
+  useEffect(() => {
+    if (post) {
+      setTitle(post.title);
+      setContent(post.content);
+      setCategoryId(post.categoryId);
+      setTagIds(post.tags.map((t) => t.id));
+    }
+  }, [post]);
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    await fetch('/api/posts', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title, content, categoryId, tagIds }),
-    });
+    const body = JSON.stringify({ title, content, categoryId, tagIds });
+    if (post) {
+      await fetch(`/api/posts/${post.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body,
+      });
+    } else {
+      await fetch('/api/posts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body,
+      });
+    }
     setTitle('');
     setContent('');
     setCategoryId(undefined);
@@ -87,9 +121,26 @@ const PostForm = ({ onSuccess }: { onSuccess: () => void }) => {
           </label>
         ))}
       </div>
-      <button type="submit" className="bg-blue-500 text-white p-2">
-        Speichern
-      </button>
+      <div className="flex gap-2">
+        <button type="submit" className="bg-blue-500 text-white p-2">
+          Speichern
+        </button>
+        {post && onCancel && (
+          <button
+            type="button"
+            onClick={() => {
+              setTitle('');
+              setContent('');
+              setCategoryId(undefined);
+              setTagIds([]);
+              onCancel();
+            }}
+            className="bg-gray-500 text-white p-2"
+          >
+            Abbrechen
+          </button>
+        )}
+      </div>
     </form>
   );
 };

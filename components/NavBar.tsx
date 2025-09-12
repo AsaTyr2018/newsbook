@@ -25,6 +25,12 @@ const NavBar = () => {
           <>
             <Link href="/profile">Profil</Link>
             {session.user?.role === 'ADMIN' && <Link href="/admin">Backend</Link>}
+            {session.user?.role === 'AUTHOR' && (
+              <Link href="/admin/posts">Beiträge</Link>
+            )}
+            {session.user?.role === 'MODERATOR' && (
+              <Link href="/admin/comments">Moderation</Link>
+            )}
             <button
               onClick={async () => {
                 await signOut({ redirect: false });

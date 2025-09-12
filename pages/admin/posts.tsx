@@ -1,4 +1,4 @@
-import { getSession } from 'next-auth/react';
+import { getSession, useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import AdminNav from '../../components/AdminNav';
 import PostForm from '../../components/PostForm';
@@ -7,12 +7,17 @@ import PostList from '../../components/PostList';
 interface Post {
   id: number;
   title: string;
+  content: string;
   category?: { name: string } | null;
   tags: { id: number; name: string }[];
+  authorId: number;
+  categoryId?: number | null;
 }
 
 const AdminPosts = () => {
+  const { data: session } = useSession();
   const [posts, setPosts] = useState<Post[]>([]);
+  const [editing, setEditing] = useState<Post | null>(null);
 
   const load = async () => {
     const res = await fetch('/api/posts');
@@ -32,8 +37,25 @@ const AdminPosts = () => {
     <div className="p-4">
       <AdminNav />
       <h1 className="text-2xl font-bold mb-4">Beiträge verwalten</h1>
-      <PostForm onSuccess={load} />
-      <PostList posts={posts} onDelete={del} />
+      <PostForm
+        onSuccess={() => {
+          setEditing(null);
+          load();
+        }}
+        post={editing}
+        onCancel={() => setEditing(null)}
+      />
+      {session && (
+        <PostList
+          posts={posts}
+          onDelete={del}
+          onEdit={(p) => setEditing(p)}
+          currentUser={{
+            id: Number((session.user as any).id),
+            role: (session.user as any).role,
+          }}
+        />
+      )}
     </div>
   );
 };
