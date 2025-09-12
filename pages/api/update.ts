@@ -6,10 +6,12 @@ import { authOptions } from './auth/[...nextauth]';
 
 function run(cmd: string) {
   return new Promise<void>((resolve, reject) => {
-    exec(cmd, (error) => {
+    const child = exec(cmd, (error) => {
       if (error) reject(error);
       else resolve();
     });
+    if (child.stdout) child.stdout.pipe(process.stdout);
+    if (child.stderr) child.stderr.pipe(process.stderr);
   });
 }
 
@@ -29,8 +31,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   });
 
   try {
-    await run('git pull');
+    await run('git fetch --all');
+    await run('git reset --hard origin/main');
+    await run('npm cache clean --force');
+    await run('npm ci');
+    await run('rm -rf .next');
     await run('npx prisma migrate deploy');
+    await run('npm run build');
     await prisma.setting.upsert({
       where: { key: 'maintenance' },
       update: { value: 'false' },
