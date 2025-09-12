@@ -14,6 +14,7 @@ export default function MyApp({ Component, pageProps: { session, ...pageProps } 
   const [siteName, setSiteName] = useState('NewsBlogCMS');
   const [theme, setTheme] = useState<Theme>('light');
   const [maintenance, setMaintenance] = useState(false);
+  const [authBaseUrl, setAuthBaseUrl] = useState('');
 
   useEffect(() => {
     const fetchSettings = () => {
@@ -40,6 +41,12 @@ export default function MyApp({ Component, pageProps: { session, ...pageProps } 
     }
   }, []);
 
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setAuthBaseUrl(window.location.origin);
+    }
+  }, []);
+
   const toggleTheme = () => {
     const newTheme = theme === 'light' ? 'dark' : 'light';
     setTheme(newTheme);
@@ -58,7 +65,7 @@ export default function MyApp({ Component, pageProps: { session, ...pageProps } 
   }
 
   return (
-    <SessionProvider session={session}>
+    <SessionProvider session={session} baseUrl={authBaseUrl}>
       <SiteContext.Provider value={{ siteName }}>
         <ThemeContext.Provider value={{ theme, toggleTheme }}>
           <Head>
