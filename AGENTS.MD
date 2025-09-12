@@ -131,9 +131,74 @@ Diese Codex-Anwendung dient der Verwaltung und Darstellung eines modernen News-B
 
 ---
 
-## Erweiterungsideen (Optional)
+## Backend Optionen
+### **1. Allgemeine Einstellungen**
 
-* Mehrsprachigkeit via i18n
-* RSS Feed Generierung
-* E-Mail-Benachrichtigung bei neuen Kommentaren
-* Admin Dashboard mit Statistiken
+* **Seitenname / Brandname** – Titel der News-Seite.
+* **Logo & Favicon** – Bilder, die auf Frontend & Tab angezeigt werden.
+* **Standard-Sprache / Locale** – für Mehrsprachigkeit.
+* **Zeitzone** – wichtig für Veröffentlichungszeitpunkte.
+* **Standard-Layout / Theme** – Farbschema, Header/Footer, ggf. Widgets.
+* **Startseite** – definierbar, z.B. News-Liste, Kategorie oder statische Seite.
+
+---
+
+### **2. Benutzer & Rollen**
+
+* **User-Management** – Admin, Redakteur, Autor, Moderator, Gast.
+* **Passwortregeln / Security** – Mindestlänge, Komplexität, 2FA.
+* **Benachrichtigungen** – E-Mail bei neuen Kommentaren, Posts, Systemmeldungen.
+* **Berechtigungen** – wer darf was: Artikel schreiben, veröffentlichen, löschen, Kategorien ändern.
+
+---
+
+### **3. Artikel & Inhalte**
+
+* **Standard-Kategorien & Tags** – für Struktur & SEO.
+* **Workflow / Veröffentlichungsprozess** – Entwurf → Review → Veröffentlichung.
+* **Maximale Uploadgröße** – Bilder, Videos, Dokumente.
+* **Medienbibliothek** – zentrale Verwaltung der Assets.
+* **Content-Versionierung** – alte Versionen wiederherstellen.
+
+---
+
+### **4. SEO & Sharing**
+
+* **Meta-Tags** – Title, Description, OpenGraph.
+* **Sitemap / RSS** – automatisch generiert oder manuell anpassbar.
+* **Permalink-Struktur** – z.B. /kategorie/artikelname.
+* **Social Sharing** – Twitter Cards, Facebook OG, LinkedIn Tags.
+
+---
+
+### **5. Sicherheit**
+
+* **HTTPS erzwingen** – SSL/TLS.
+* **Login-Versuche limitieren / IP-Sperre**.
+* **Backup-Einstellungen** – Intervalle, Speicherort.
+* **Audit-Log** – wer hat was geändert?
+
+---
+
+### **6. E-Mail & Benachrichtigung**
+
+* SMTP / Mailserver-Einstellungen.
+* Systemmails (Passwort zurücksetzen, Benachrichtigungen).
+* Newsletter-Einstellungen (optional).
+
+---
+
+### **7. Systemeinstellungen**
+
+* **Cache / Performance** – z.B. Seiten-Caching, Bildoptimierung.
+* **Cronjobs / Scheduled Tasks** – für geplante Artikel, Backups.
+* **Logging / Debugging** – Fehlerprotokolle.
+
+---
+
+### **8. Optional / Nice-to-Have**
+
+* **Third-Party Integrationen** – Google Analytics, Disqus, ReCaptcha.
+* **Custom CSS / JS** – kleine Anpassungen ohne Core-Änderung.
+* **Maintenance Mode** – Seite temporär offline für Updates.
+* **Import / Export** – Artikel, Benutzer, Medien.
