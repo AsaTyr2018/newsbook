@@ -17,6 +17,8 @@ npm run prisma:seed
 
 ```bash
 npm run dev
+-> Für extern
+npx next dev -H 0.0.0.0 -p 3000
 ```
 
 Die App läuft anschließend unter `http://localhost:3000`.
