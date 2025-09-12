@@ -59,3 +59,9 @@ model Comment {
   user      User?    @relation(fields: [userId], references: [id])
   userId    Int?
 }
+
+model Setting {
+  id    Int    @id @default(autoincrement())
+  key   String @unique
+  value String
+}
