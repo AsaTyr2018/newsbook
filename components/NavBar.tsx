@@ -8,18 +8,20 @@ const NavBar = () => {
   const { siteName } = useContext(SiteContext);
 
   return (
-    <nav className="flex gap-4 p-4 border-b">
-      <span className="font-bold">{siteName}</span>
-      <Link href="/">Startseite</Link>
-      {session ? (
-        <>
-          <Link href="/profile">Profil</Link>
-          {session.user?.role === 'ADMIN' && <Link href="/admin">Backend</Link>}
-          <button onClick={() => signOut()} className="text-blue-600">Logout</button>
-        </>
-      ) : (
-        <Link href="/admin/login">Login</Link>
-      )}
+    <nav className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+      <span className="font-bold text-xl">{siteName}</span>
+      <div className="flex gap-4">
+        <Link href="/">Startseite</Link>
+        {session ? (
+          <>
+            <Link href="/profile">Profil</Link>
+            {session.user?.role === 'ADMIN' && <Link href="/admin">Backend</Link>}
+            <button onClick={() => signOut()} className="text-blue-600 dark:text-blue-400">Logout</button>
+          </>
+        ) : (
+          <Link href="/admin/login" className="text-blue-600 dark:text-blue-400">Login</Link>
+        )}
+      </div>
     </nav>
   );
 };
