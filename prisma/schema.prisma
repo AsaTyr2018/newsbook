@@ -24,6 +24,7 @@ model User {
   name     String?
   bio      String?
   image    String?
+  challengePhrase String?
   comments Comment[]
   posts    Post[]
 }

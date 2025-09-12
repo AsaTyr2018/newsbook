@@ -10,7 +10,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       include: {
         category: true,
         tags: true,
-        author: { select: { username: true } },
+        author: { select: { username: true, name: true } },
       },
       orderBy: { createdAt: 'desc' },
     });
@@ -36,7 +36,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       include: {
         category: true,
         tags: true,
-        author: { select: { username: true } },
+        author: { select: { username: true, name: true } },
       },
     });
     return res.json(post);

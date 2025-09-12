@@ -9,6 +9,11 @@ const Profile = () => {
   const [bio, setBio] = useState('');
   const [image, setImage] = useState('');
   const [saved, setSaved] = useState(false);
+  const [challenge, setChallenge] = useState('');
+  const [oldPassword, setOldPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirm, setConfirm] = useState('');
+  const [error, setError] = useState('');
 
   useEffect(() => {
     fetch('/api/profile')
@@ -22,13 +27,31 @@ const Profile = () => {
 
   const save = async (e: FormEvent) => {
     e.preventDefault();
-    await fetch('/api/profile', {
+    setError('');
+    const res = await fetch('/api/profile', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, bio, image }),
+      body: JSON.stringify({
+        name,
+        bio,
+        image,
+        challengePhrase: challenge,
+        oldPassword,
+        newPassword,
+        confirmPassword: confirm,
+      }),
     });
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+    const data = await res.json();
+    if (data.error) {
+      setError(data.error);
+    } else {
+      setSaved(true);
+      setChallenge('');
+      setOldPassword('');
+      setNewPassword('');
+      setConfirm('');
+      setTimeout(() => setSaved(false), 2000);
+    }
   };
 
   return (
@@ -53,8 +76,36 @@ const Profile = () => {
           value={image}
           onChange={(e) => setImage(e.target.value)}
         />
+        <input
+          className="border p-2"
+          placeholder="Challenge Phrase"
+          value={challenge}
+          onChange={(e) => setChallenge(e.target.value)}
+        />
+        <input
+          type="password"
+          className="border p-2"
+          placeholder="Altes Passwort"
+          value={oldPassword}
+          onChange={(e) => setOldPassword(e.target.value)}
+        />
+        <input
+          type="password"
+          className="border p-2"
+          placeholder="Neues Passwort"
+          value={newPassword}
+          onChange={(e) => setNewPassword(e.target.value)}
+        />
+        <input
+          type="password"
+          className="border p-2"
+          placeholder="Passwort bestätigen"
+          value={confirm}
+          onChange={(e) => setConfirm(e.target.value)}
+        />
         <button className="bg-blue-500 text-white p-2">Speichern</button>
         {saved && <p className="text-green-600">Gespeichert!</p>}
+        {error && <p className="text-red-600">{error}</p>}
       </form>
       <div>
         <span className="mr-2">Modus:</span>
