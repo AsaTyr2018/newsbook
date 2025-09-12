@@ -16,14 +16,19 @@ export default function MyApp({ Component, pageProps: { session, ...pageProps } 
   const [maintenance, setMaintenance] = useState(false);
 
   useEffect(() => {
-    fetch('/api/settings')
-      .then((res) => res.json())
-      .then((data) => {
-        setSiteName(data.siteName || 'NewsBlogCMS');
-        setMaintenance(data.maintenance === 'true');
-      })
-      .catch(() => {});
-  }, []);
+    const fetchSettings = () => {
+      fetch('/api/settings')
+        .then((res) => res.json())
+        .then((data) => {
+          setSiteName(data.siteName || 'NewsBlogCMS');
+          setMaintenance(data.maintenance === 'true');
+        })
+        .catch(() => {});
+    };
+    fetchSettings();
+    const interval = setInterval(fetchSettings, 5000);
+    return () => clearInterval(interval);
+  }, [router.asPath]);
 
   useEffect(() => {
     const stored = (typeof window !== 'undefined' && window.localStorage.getItem('theme')) as Theme | null;
