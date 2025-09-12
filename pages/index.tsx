@@ -1,8 +1,6 @@
 import { GetServerSideProps, NextPage } from 'next';
 import Link from 'next/link';
-import { useContext } from 'react';
 import { prisma } from '../lib/prisma';
-import { SiteContext } from '../lib/SiteContext';
 
 interface Post {
   id: number;
@@ -20,10 +18,8 @@ interface HomeProps {
 }
 
 const Home: NextPage<HomeProps> = ({ posts }) => {
-  const { siteName } = useContext(SiteContext);
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">{siteName}</h1>
       {posts.map((post) => (
         <div key={post.id} className="mb-6 border-b pb-4">
           <h2 className="text-xl font-semibold">
