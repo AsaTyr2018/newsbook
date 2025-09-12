@@ -1,4 +1,5 @@
-import { FormEvent, useEffect, useState } from 'react';
+import { FormEvent, useEffect, useState, useCallback } from 'react';
+import { useSession } from 'next-auth/react';
 
 interface Comment {
   id: number;
@@ -11,23 +12,24 @@ const CommentSection = ({ postId }: { postId: number }) => {
   const [comments, setComments] = useState<Comment[]>([]);
   const [name, setName] = useState('');
   const [message, setMessage] = useState('');
+  const { data: session } = useSession();
 
-  const loadComments = async () => {
+  const loadComments = useCallback(async () => {
     const res = await fetch(`/api/comments?postId=${postId}`);
     const data = await res.json();
     setComments(data);
-  };
+  }, [postId]);
 
   useEffect(() => {
     loadComments();
-  }, [postId]);
+  }, [loadComments]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     await fetch('/api/comments', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ postId, name, message }),
+      body: JSON.stringify({ postId, name: session?.user ? undefined : name, message }),
     });
     setName('');
     setMessage('');
@@ -50,12 +52,14 @@ const CommentSection = ({ postId }: { postId: number }) => {
         <p className="mb-4 text-sm">Keine Kommentare vorhanden.</p>
       )}
       <form onSubmit={handleSubmit} className="flex flex-col gap-2">
-        <input
-          className="border p-2"
-          placeholder="Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
+        {!session && (
+          <input
+            className="border p-2"
+            placeholder="Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+        )}
         <textarea
           className="border p-2"
           placeholder="Kommentar"
