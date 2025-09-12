@@ -20,6 +20,7 @@ model User {
   role     Role     @default(USER)
   name     String?
   comments Comment[]
+  posts    Post[]
 }
 
 model Post {
@@ -31,6 +32,8 @@ model Post {
   updatedAt  DateTime  @updatedAt
   category   Category? @relation(fields: [categoryId], references: [id])
   categoryId Int?
+  author     User?     @relation(fields: [authorId], references: [id])
+  authorId   Int?
   tags       Tag[]     @relation("PostTags")
   comments   Comment[]
 }
