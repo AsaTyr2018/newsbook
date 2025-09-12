@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "node scripts/clearMaintenance.js && next dev",
     "build": "next build",
-    "start": "next start",
+    "start": "node scripts/clearMaintenance.js && next start",
     "lint": "next lint",
     "test": "echo \"No tests specified\" && exit 0",
     "prisma:migrate": "prisma migrate dev",
