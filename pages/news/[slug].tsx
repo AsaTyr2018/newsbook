@@ -55,12 +55,22 @@ export const getServerSideProps: GetServerSideProps<PostPageProps> = async (cont
     },
   });
   const parser = edjsHTML();
+  const parsedContent = post
+    ? parser.parse(
+        typeof post.content === 'string'
+          ? JSON.parse(post.content)
+          : (post.content as any)
+      )
+    : '';
+  const htmlContent = Array.isArray(parsedContent)
+    ? parsedContent.join('')
+    : parsedContent;
   return {
     props: {
       post: post
         ? {
             ...post,
-            content: parser.parse(post.content as any).join(''),
+            content: htmlContent,
             createdAt: post.createdAt.toISOString(),
             updatedAt: post.updatedAt.toISOString(),
           }
