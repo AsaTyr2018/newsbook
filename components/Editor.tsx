@@ -9,7 +9,10 @@ interface EditorProps {
 
 const Editor = ({ data, onChange }: EditorProps) => {
   const editorRef = useRef<EditorJS | null>(null);
+  const hasRendered = useRef(false);
 
+  // Initialize editor once
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     let isMounted = true;
     (async () => {
@@ -33,8 +36,9 @@ const Editor = ({ data, onChange }: EditorProps) => {
   }, []);
 
   useEffect(() => {
-    if (data && editorRef.current) {
+    if (editorRef.current && data && !hasRendered.current) {
       editorRef.current.render(data);
+      hasRendered.current = true;
     }
   }, [data]);
 
