@@ -9,7 +9,8 @@
     "lint": "next lint",
     "test": "echo \"No tests specified\" && exit 0",
     "prisma:migrate": "prisma migrate dev",
-    "prisma:generate": "prisma generate"
+    "prisma:generate": "prisma generate",
+    "prisma:seed": "node prisma/seed.js"
   },
   "dependencies": {
     "@prisma/client": "^5.7.0",
@@ -18,6 +19,7 @@
     "autoprefixer": "^10.4.14",
     "next": "^14.0.0",
     "next-auth": "^4.24.0",
+    "bcryptjs": "^2.4.3",
     "postcss": "^8.4.24",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
