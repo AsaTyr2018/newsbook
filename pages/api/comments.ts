@@ -7,6 +7,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const where = postId ? { postId: Number(postId) } : {};
     const comments = await prisma.comment.findMany({
       where,
+      include: { post: { select: { title: true } } },
       orderBy: { createdAt: 'desc' },
     });
     return res.json(comments);
