@@ -26,7 +26,10 @@ const NavBar = () => {
             <Link href="/profile">Profil</Link>
             {session.user?.role === 'ADMIN' && <Link href="/admin">Backend</Link>}
             <button
-              onClick={() => signOut({ callbackUrl: window.location.origin })}
+              onClick={async () => {
+                await signOut({ redirect: false });
+                window.location.href = window.location.origin;
+              }}
               className="text-blue-600 dark:text-blue-400"
             >
               Logout
