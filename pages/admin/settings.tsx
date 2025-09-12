@@ -36,7 +36,7 @@ const AdminSettings = () => {
       <form onSubmit={save} className="flex flex-col gap-2 max-w-md">
         <input
           className="border p-2"
-          placeholder="Seitenname"
+          placeholder="Seitentitel"
           value={siteName}
           onChange={(e) => setSiteName(e.target.value)}
         />
