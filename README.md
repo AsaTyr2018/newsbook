@@ -44,6 +44,9 @@ Die Anwendung ist anschließend unter `http://localhost:3000` erreichbar.
 
 Der Seed erzeugt einen Admin-Benutzer mit Benutzername `admin` und Passwort `admin`. Der Admin-Bereich ist unter `/admin` verfügbar.
 
+⚠️ Sicherheitshinweis: Wer admin/admin als Benutzername/Passwort auf einer Live-Installation lässt, hat den Hacker echt verdient. 
+Wirklich, änder das sofort!
+
 ## Rollenmodell
 
 - **Gast** – kann lesen und Kommentare verfassen (Moderation erforderlich)
