@@ -2,6 +2,7 @@ import { GetServerSideProps } from 'next';
 import Link from 'next/link';
 import { prisma } from '../../lib/prisma';
 import CommentSection from '../../components/CommentSection';
+import edjsHTML from 'editorjs-html';
 
 interface PostPageProps {
   post: {
@@ -53,11 +54,13 @@ export const getServerSideProps: GetServerSideProps<PostPageProps> = async (cont
       tags: true,
     },
   });
+  const parser = edjsHTML();
   return {
     props: {
       post: post
         ? {
             ...post,
+            content: parser.parse(post.content as any).join(''),
             createdAt: post.createdAt.toISOString(),
             updatedAt: post.updatedAt.toISOString(),
           }
