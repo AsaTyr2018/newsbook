@@ -14,7 +14,7 @@ const AdminComments = () => {
   const [comments, setComments] = useState<Comment[]>([]);
 
   const load = async () => {
-    const res = await fetch('/api/comments');
+    const res = await fetch('/api/comments?status=PENDING');
     setComments(await res.json());
   };
 
