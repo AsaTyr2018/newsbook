@@ -44,6 +44,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       create: { key: 'maintenance', value: 'false' },
     });
     res.json({ status: 'updated' });
+    setTimeout(() => {
+      process.exit(0);
+    }, 1000);
   } catch (e) {
     await prisma.setting.upsert({
       where: { key: 'maintenance' },
