@@ -6,6 +6,7 @@ const AdminSettings = () => {
   const [siteName, setSiteName] = useState('');
   const [locale, setLocale] = useState('');
   const [timezone, setTimezone] = useState('');
+  const [allowSignup, setAllowSignup] = useState(false);
   const [saved, setSaved] = useState(false);
   const [updating, setUpdating] = useState(false);
 
@@ -16,6 +17,7 @@ const AdminSettings = () => {
         setSiteName(data.siteName || '');
         setLocale(data.locale || '');
         setTimezone(data.timezone || '');
+        setAllowSignup(data.allowSignup === 'true');
       });
   }, []);
 
@@ -24,7 +26,7 @@ const AdminSettings = () => {
     await fetch('/api/settings', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ siteName, locale, timezone }),
+      body: JSON.stringify({ siteName, locale, timezone, allowSignup }),
     });
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
@@ -53,6 +55,14 @@ const AdminSettings = () => {
           value={timezone}
           onChange={(e) => setTimezone(e.target.value)}
         />
+        <label className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            checked={allowSignup}
+            onChange={(e) => setAllowSignup(e.target.checked)}
+          />
+          <span>Signup erlauben</span>
+        </label>
         <button className="bg-blue-500 text-white p-2">Speichern</button>
         {saved && <p className="text-green-600">Gespeichert!</p>}
         <button

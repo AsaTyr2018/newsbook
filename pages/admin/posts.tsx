@@ -42,7 +42,10 @@ export default AdminPosts;
 
 export async function getServerSideProps(context: any) {
   const session = await getSession(context);
-  if (!session || session.user?.role !== 'ADMIN') {
+  if (
+    !session ||
+    !['ADMIN', 'AUTHOR'].includes((session.user as any).role)
+  ) {
     return {
       redirect: {
         destination: '/admin/login',

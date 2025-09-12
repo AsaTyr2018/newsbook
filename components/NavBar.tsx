@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { signOut, useSession } from 'next-auth/react';
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { SiteContext } from '../lib/SiteContext';
 import { ThemeContext } from '../lib/ThemeContext';
 
@@ -8,6 +8,13 @@ const NavBar = () => {
   const { data: session } = useSession();
   const { siteName } = useContext(SiteContext);
   const { theme, toggleTheme } = useContext(ThemeContext);
+  const [allowSignup, setAllowSignup] = useState(false);
+
+  useEffect(() => {
+    fetch('/api/settings')
+      .then((res) => res.json())
+      .then((data) => setAllowSignup(data.allowSignup === 'true'));
+  }, []);
 
   return (
     <nav className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
@@ -21,7 +28,14 @@ const NavBar = () => {
             <button onClick={() => signOut()} className="text-blue-600 dark:text-blue-400">Logout</button>
           </>
         ) : (
-          <Link href="/admin/login" className="text-blue-600 dark:text-blue-400">Login</Link>
+          <>
+            <Link href="/admin/login" className="text-blue-600 dark:text-blue-400">Login</Link>
+            {allowSignup && (
+              <Link href="/signup" className="text-blue-600 dark:text-blue-400">
+                Signup
+              </Link>
+            )}
+          </>
         )}
         <button
           onClick={toggleTheme}

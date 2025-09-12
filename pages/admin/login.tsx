@@ -1,11 +1,19 @@
-import { FormEvent, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import { signIn, getSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 
 const AdminLogin = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [allowSignup, setAllowSignup] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    fetch('/api/settings')
+      .then((res) => res.json())
+      .then((data) => setAllowSignup(data.allowSignup === 'true'));
+  }, []);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -41,6 +49,14 @@ const AdminLogin = () => {
           Login
         </button>
       </form>
+      {allowSignup && (
+        <p className="mt-4 text-sm">
+          Noch kein Account?{' '}
+          <Link href="/signup" className="text-blue-600 underline">
+            Signup
+          </Link>
+        </p>
+      )}
     </div>
   );
 };
