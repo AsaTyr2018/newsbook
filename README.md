@@ -13,7 +13,7 @@ NewsBlogCMS ist eine umfassende News-Blog-Anwendung auf Basis von Next.js, Tailw
 
 ### Administrationsbereich
 - Anmeldung über NextAuth (Admin-only)
-- Erstellen, Bearbeiten, Löschen und Vorschau von Beiträgen im TipTap-Editor
+- Erstellen, Bearbeiten, Löschen und Vorschau von Beiträgen im Editor.js-Editor
 - Automatische oder manuelle Slug-Generierung mit Kategorie- und Tag-Zuweisung
 - Verwaltung von Kategorien und Tags
 - Moderation und Löschung von Kommentaren
