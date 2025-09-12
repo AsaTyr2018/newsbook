@@ -1,12 +1,15 @@
 import Link from 'next/link';
 import { signOut, useSession } from 'next-auth/react';
+import { useContext } from 'react';
+import { SiteContext } from '../lib/SiteContext';
 
 const NavBar = () => {
   const { data: session } = useSession();
+  const { siteName } = useContext(SiteContext);
 
   return (
     <nav className="flex gap-4 p-4 border-b">
-      <Link href="/">Startseite</Link>
+      <Link href="/">{siteName}</Link>
       {session ? (
         <>
           <Link href="/profile">Profil</Link>
