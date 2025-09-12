@@ -10,6 +10,7 @@ interface PostPageProps {
     content: string;
     slug: string;
     createdAt: string;
+    updatedAt: string;
     author?: { username: string } | null;
     category?: { name: string } | null;
     tags: { id: number; name: string }[];
@@ -46,7 +47,17 @@ export const getServerSideProps: GetServerSideProps<PostPageProps> = async (cont
       tags: true,
     },
   });
-  return { props: { post: post ? { ...post, createdAt: post.createdAt.toISOString() } : null } };
+  return {
+    props: {
+      post: post
+        ? {
+            ...post,
+            createdAt: post.createdAt.toISOString(),
+            updatedAt: post.updatedAt.toISOString(),
+          }
+        : null,
+    },
+  };
 };
 
 export default NewsPost;

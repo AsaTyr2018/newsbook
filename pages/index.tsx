@@ -7,6 +7,7 @@ interface Post {
   title: string;
   slug: string;
   createdAt: string;
+  updatedAt: string;
   author?: { username: string } | null;
   category?: { name: string } | null;
   tags: { id: number; name: string }[];
@@ -52,7 +53,11 @@ export const getServerSideProps: GetServerSideProps<HomeProps> = async () => {
   });
   return {
     props: {
-      posts: posts.map((p) => ({ ...p, createdAt: p.createdAt.toISOString() })),
+      posts: posts.map((p) => ({
+        ...p,
+        createdAt: p.createdAt.toISOString(),
+        updatedAt: p.updatedAt.toISOString(),
+      })),
     },
   };
 };
