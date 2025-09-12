@@ -1,6 +1,9 @@
+import type { OutputData } from '@editorjs/editorjs';
+
 interface Post {
   id: number;
   title: string;
+  content: OutputData;
   category?: { name: string } | null;
   tags: { id: number; name: string }[];
   authorId: number;

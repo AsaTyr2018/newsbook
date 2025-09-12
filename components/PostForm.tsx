@@ -1,4 +1,8 @@
 import { FormEvent, useEffect, useState } from 'react';
+import type { OutputData } from '@editorjs/editorjs';
+import dynamic from 'next/dynamic';
+
+const Editor = dynamic(() => import('./Editor'), { ssr: false });
 
 interface Category {
   id: number;
@@ -13,7 +17,7 @@ interface Tag {
 interface Post {
   id: number;
   title: string;
-  content: string;
+  content: OutputData;
   categoryId?: number;
   tags: Tag[];
 }
@@ -28,7 +32,7 @@ const PostForm = ({
   onCancel?: () => void;
 }) => {
   const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
+  const [content, setContent] = useState<OutputData | undefined>();
   const [categoryId, setCategoryId] = useState<number | undefined>();
   const [tagIds, setTagIds] = useState<number[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -69,7 +73,7 @@ const PostForm = ({
       });
     }
     setTitle('');
-    setContent('');
+    setContent(undefined);
     setCategoryId(undefined);
     setTagIds([]);
     onSuccess();
@@ -89,12 +93,7 @@ const PostForm = ({
         value={title}
         onChange={(e) => setTitle(e.target.value)}
       />
-      <textarea
-        className="border p-2"
-        placeholder="Inhalt"
-        value={content}
-        onChange={(e) => setContent(e.target.value)}
-      />
+      <Editor data={content} onChange={(data) => setContent(data)} />
       <select
         className="border p-2"
         value={categoryId ?? ''}
@@ -130,7 +129,7 @@ const PostForm = ({
             type="button"
             onClick={() => {
               setTitle('');
-              setContent('');
+              setContent(undefined);
               setCategoryId(undefined);
               setTagIds([]);
               onCancel();

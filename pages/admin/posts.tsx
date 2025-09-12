@@ -3,11 +3,12 @@ import { useEffect, useState } from 'react';
 import AdminNav from '../../components/AdminNav';
 import PostForm from '../../components/PostForm';
 import PostList from '../../components/PostList';
+import type { OutputData } from '@editorjs/editorjs';
 
 interface Post {
   id: number;
   title: string;
-  content: string;
+  content: OutputData;
   category?: { name: string } | null;
   tags: { id: number; name: string }[];
   authorId: number;
