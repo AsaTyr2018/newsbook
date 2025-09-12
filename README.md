@@ -22,14 +22,6 @@ Führe das Setup-Skript aus, um Abhängigkeiten zu installieren, die `.env`-Date
 ./scripts/setup.sh
 ```
 
-## Upgrade
-
-Zum Aktualisieren auf die neueste Version und Anwenden ausstehender Datenbankmigrationen führe das Upgrade-Skript aus:
-
-```bash
-./scripts/upgrade.sh
-```
-
 ## Entwicklung starten
 
 ```bash
