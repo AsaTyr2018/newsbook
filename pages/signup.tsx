@@ -11,16 +11,27 @@ const Signup = ({ allowSignup }: { allowSignup: boolean }) => {
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
-    const res = await fetch('/api/signup', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, email, password }),
-    });
-    if (res.ok) {
-      router.push('/admin/login');
-    } else {
-      const data = await res.json();
-      setError(data.error || 'Fehler');
+    setError('');
+    try {
+      const res = await fetch('/api/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, email, password }),
+      });
+      if (res.ok) {
+        router.push('/admin/login');
+      } else {
+        let message = 'Fehler';
+        try {
+          const data = await res.json();
+          message = data.error || message;
+        } catch {
+          // Antwort ist kein JSON
+        }
+        setError(message);
+      }
+    } catch {
+      setError('Netzwerkfehler');
     }
   };
 
