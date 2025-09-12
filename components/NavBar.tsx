@@ -9,7 +9,8 @@ const NavBar = () => {
 
   return (
     <nav className="flex gap-4 p-4 border-b">
-      <Link href="/">{siteName}</Link>
+      <span className="font-bold">{siteName}</span>
+      <Link href="/">Startseite</Link>
       {session ? (
         <>
           <Link href="/profile">Profil</Link>
