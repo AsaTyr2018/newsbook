@@ -9,4 +9,9 @@
   .dark body {
     @apply bg-gray-950 text-gray-100;
   }
+  input,
+  textarea,
+  select {
+    @apply bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100;
+  }
 }
