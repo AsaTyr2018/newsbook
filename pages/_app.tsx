@@ -59,8 +59,14 @@ export default function MyApp({ Component, pageProps: { session, ...pageProps } 
           <Head>
             <title>{siteName}</title>
           </Head>
-          <NavBar />
-          <Component {...pageProps} />
+          <div className="min-h-screen p-4 bg-gray-100 dark:bg-gray-950">
+            <div className="max-w-4xl mx-auto bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm overflow-hidden">
+              <NavBar />
+              <main className="p-4">
+                <Component {...pageProps} />
+              </main>
+            </div>
+          </div>
         </ThemeContext.Provider>
       </SiteContext.Provider>
     </SessionProvider>
