@@ -11,7 +11,7 @@ interface PostPageProps {
     slug: string;
     createdAt: string;
     updatedAt: string;
-    author?: { username: string } | null;
+    author?: { username: string; name: string | null } | null;
     category?: { name: string } | null;
     tags: { id: number; name: string }[];
   } | null;
@@ -23,7 +23,7 @@ const NewsPost = ({ post }: PostPageProps) => {
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-2">{post.title}</h1>
       <p className="text-sm text-gray-500 mb-4">
-        {new Date(post.createdAt).toLocaleDateString()} | Autor: {post.author?.username || 'Unbekannt'} | Kategorie: {post.category?.name || 'Keine'}
+        {new Date(post.createdAt).toLocaleDateString()} | Autor: {post.author?.name || post.author?.username || 'Unbekannt'} | Kategorie: {post.category?.name || 'Keine'}
       </p>
       {post.tags.length > 0 && (
         <p className="text-sm mb-4">Tags: {post.tags.map((t) => t.name).join(', ')}</p>
@@ -42,7 +42,7 @@ export const getServerSideProps: GetServerSideProps<PostPageProps> = async (cont
   const post = await prisma.post.findUnique({
     where: { slug },
     include: {
-      author: { select: { username: true } },
+      author: { select: { username: true, name: true } },
       category: true,
       tags: true,
     },

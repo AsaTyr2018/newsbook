@@ -8,6 +8,7 @@ const AdminNav = () => {
       <Link href="/admin/tags">Tags</Link>
       <Link href="/admin/comments">Kommentare</Link>
       <Link href="/admin/settings">Einstellungen</Link>
+      <Link href="/admin/users">Benutzer</Link>
     </nav>
   );
 };

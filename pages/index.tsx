@@ -8,7 +8,7 @@ interface Post {
   slug: string;
   createdAt: string;
   updatedAt: string;
-  author?: { username: string } | null;
+  author?: { username: string; name: string | null } | null;
   category?: { name: string } | null;
   tags: { id: number; name: string }[];
 }
@@ -26,7 +26,7 @@ const Home: NextPage<HomeProps> = ({ posts }) => {
             <Link href={`/news/${post.slug}`}>{post.title}</Link>
           </h2>
           <p className="text-sm text-gray-500">
-            {new Date(post.createdAt).toLocaleDateString()} | Autor: {post.author?.username || 'Unbekannt'} |
+            {new Date(post.createdAt).toLocaleDateString()} | Autor: {post.author?.name || post.author?.username || 'Unbekannt'} |
             Kategorie: {post.category?.name || 'Keine'}
           </p>
           {post.tags.length > 0 && (
@@ -44,7 +44,7 @@ const Home: NextPage<HomeProps> = ({ posts }) => {
 export const getServerSideProps: GetServerSideProps<HomeProps> = async () => {
   const posts = await prisma.post.findMany({
     include: {
-      author: { select: { username: true } },
+      author: { select: { username: true, name: true } },
       category: true,
       tags: true,
     },

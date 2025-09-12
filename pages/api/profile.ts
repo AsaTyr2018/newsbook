@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { getServerSession } from 'next-auth';
 import { authOptions } from './auth/[...nextauth]';
 import { prisma } from '../../lib/prisma';
+import bcrypt from 'bcryptjs';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const session = await getServerSession(req, res, authOptions);
@@ -18,10 +19,24 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.json(user);
   }
   if (req.method === 'POST') {
-    const { name, bio, image } = req.body;
+    const { name, bio, image, challengePhrase, oldPassword, newPassword, confirmPassword } = req.body;
+    const data: any = { name, bio, image };
+    if (challengePhrase) {
+      data.challengePhrase = await bcrypt.hash(challengePhrase, 10);
+    }
+    if (oldPassword || newPassword || confirmPassword) {
+      if (!oldPassword || !newPassword || newPassword !== confirmPassword) {
+        return res.status(400).json({ error: 'Passwort ungültig' });
+      }
+      const user = await prisma.user.findUnique({ where: { id: userId } });
+      if (!user) return res.status(404).json({ error: 'User not found' });
+      const valid = await bcrypt.compare(oldPassword, user.password);
+      if (!valid) return res.status(400).json({ error: 'Falsches Passwort' });
+      data.password = await bcrypt.hash(newPassword, 10);
+    }
     await prisma.user.update({
       where: { id: userId },
-      data: { name, bio, image },
+      data,
     });
     return res.json({ status: 'ok' });
   }
