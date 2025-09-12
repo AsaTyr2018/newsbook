@@ -4,13 +4,10 @@ NewsBlogCMS ist ein moderner News-Blog mit Next.js, Tailwind CSS, Prisma und Pos
 
 ## Installation
 
-1. `.env.example` nach `.env` kopieren und `DATABASE_URL`, `NEXTAUTH_URL` sowie `NEXTAUTH_SECRET` anpassen.
-2. Abhängigkeiten installieren und Datenbank einrichten:
+Führe das Setup-Skript aus, um Abhängigkeiten zu installieren, die `.env`-Datei anzulegen, PostgreSQL einzurichten und die Datenbank zu migrieren sowie mit Beispieldaten zu füllen:
 
 ```bash
-npm install
-npx prisma migrate dev
-npm run prisma:seed
+./scripts/setup.sh
 ```
 
 ## Entwicklung starten
