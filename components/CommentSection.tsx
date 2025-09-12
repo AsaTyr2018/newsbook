@@ -1,5 +1,73 @@
-const CommentSection = () => {
-  return <div>Comment Section Placeholder</div>;
+import { FormEvent, useEffect, useState } from 'react';
+
+interface Comment {
+  id: number;
+  name: string;
+  message: string;
+  createdAt: string;
+}
+
+const CommentSection = ({ postId }: { postId: number }) => {
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [name, setName] = useState('');
+  const [message, setMessage] = useState('');
+
+  const loadComments = async () => {
+    const res = await fetch(`/api/comments?postId=${postId}`);
+    const data = await res.json();
+    setComments(data);
+  };
+
+  useEffect(() => {
+    loadComments();
+  }, [postId]);
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    await fetch('/api/comments', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ postId, name, message }),
+    });
+    setName('');
+    setMessage('');
+    loadComments();
+  };
+
+  return (
+    <div id="comments" className="mt-8">
+      <h3 className="text-lg font-semibold mb-2">Kommentare</h3>
+      {comments.length ? (
+        <ul className="mb-4">
+          {comments.map((c) => (
+            <li key={c.id} className="mb-2">
+              <p className="text-sm font-semibold">{c.name}</p>
+              <p className="text-sm">{c.message}</p>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="mb-4 text-sm">Keine Kommentare vorhanden.</p>
+      )}
+      <form onSubmit={handleSubmit} className="flex flex-col gap-2">
+        <input
+          className="border p-2"
+          placeholder="Name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+        <textarea
+          className="border p-2"
+          placeholder="Kommentar"
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+        />
+        <button type="submit" className="bg-blue-500 text-white p-2">
+          Abschicken
+        </button>
+      </form>
+    </div>
+  );
 };
 
 export default CommentSection;
