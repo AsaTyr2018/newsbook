@@ -8,6 +8,7 @@ import NavBar from '../components/NavBar';
 import { SiteContext } from '../lib/SiteContext';
 import { ThemeContext, Theme } from '../lib/ThemeContext';
 import Maintenance from '../components/Maintenance';
+import { LocaleContext, Locale } from '../lib/LocaleContext';
 
 export default function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   const router = useRouter();
@@ -15,6 +16,7 @@ export default function MyApp({ Component, pageProps: { session, ...pageProps } 
   const [theme, setTheme] = useState<Theme>('light');
   const [maintenance, setMaintenance] = useState(false);
   const [authBaseUrl, setAuthBaseUrl] = useState('');
+  const [locale, setLocale] = useState<Locale>('en-EN');
 
   useEffect(() => {
     const fetchSettings = () => {
@@ -23,10 +25,17 @@ export default function MyApp({ Component, pageProps: { session, ...pageProps } 
         .then((data) => {
           setSiteName(data.siteName || 'NewsBlogCMS');
           setMaintenance(data.maintenance === 'true');
+          setLocale((data.locale as Locale) || 'en-EN');
         })
         .catch(() => {});
     };
     fetchSettings();
+    fetch('/api/profile')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data?.locale) setLocale(data.locale);
+      })
+      .catch(() => {});
     const interval = setInterval(fetchSettings, 5000);
     return () => clearInterval(interval);
   }, [router.asPath]);
@@ -67,19 +76,21 @@ export default function MyApp({ Component, pageProps: { session, ...pageProps } 
   return (
     <SessionProvider session={session} baseUrl={authBaseUrl}>
       <SiteContext.Provider value={{ siteName }}>
-        <ThemeContext.Provider value={{ theme, toggleTheme }}>
-          <Head>
-            <title>{siteName}</title>
-          </Head>
-          <div className="min-h-screen p-4 bg-gray-100 dark:bg-gray-950">
-            <div className="max-w-4xl mx-auto bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm overflow-hidden">
-              <NavBar />
-              <main className="p-4">
-                <Component {...pageProps} />
-              </main>
+        <LocaleContext.Provider value={{ locale, setLocale }}>
+          <ThemeContext.Provider value={{ theme, toggleTheme }}>
+            <Head>
+              <title>{siteName}</title>
+            </Head>
+            <div className="min-h-screen p-4 bg-gray-100 dark:bg-gray-950">
+              <div className="max-w-4xl mx-auto bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm overflow-hidden">
+                <NavBar />
+                <main className="p-4">
+                  <Component {...pageProps} />
+                </main>
+              </div>
             </div>
-          </div>
-        </ThemeContext.Provider>
+          </ThemeContext.Provider>
+        </LocaleContext.Provider>
       </SiteContext.Provider>
     </SessionProvider>
   );

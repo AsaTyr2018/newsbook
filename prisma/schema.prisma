@@ -25,6 +25,7 @@ model User {
   bio      String?
   image    String?
   challengePhrase String?
+  locale   String?
   createdAt DateTime @default(now())
   comments Comment[]
   posts    Post[]

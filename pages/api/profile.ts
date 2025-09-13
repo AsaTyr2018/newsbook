@@ -14,13 +14,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (req.method === 'GET') {
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      select: { name: true, bio: true, image: true },
+      select: { name: true, bio: true, image: true, locale: true },
     });
     return res.json(user);
   }
   if (req.method === 'POST') {
-    const { name, bio, image, challengePhrase, oldPassword, newPassword, confirmPassword } = req.body;
-    const data: any = { name, bio, image };
+    const { name, bio, image, locale, challengePhrase, oldPassword, newPassword, confirmPassword } = req.body;
+    const data: any = { name, bio, image, locale };
     if (challengePhrase) {
       data.challengePhrase = await bcrypt.hash(challengePhrase, 10);
     }
