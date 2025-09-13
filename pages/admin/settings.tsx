@@ -7,6 +7,10 @@ const AdminSettings = () => {
   const [locale, setLocale] = useState('');
   const [timezone, setTimezone] = useState('');
   const [allowSignup, setAllowSignup] = useState(false);
+  const [avatarMaxSize, setAvatarMaxSize] = useState('');
+  const [avatarAllowedFormats, setAvatarAllowedFormats] = useState('');
+  const [avatarMaxDimension, setAvatarMaxDimension] = useState('');
+  const [avatarMinDimension, setAvatarMinDimension] = useState('');
   const [saved, setSaved] = useState(false);
   const [updating, setUpdating] = useState(false);
 
@@ -18,6 +22,12 @@ const AdminSettings = () => {
         setLocale(data.locale || '');
         setTimezone(data.timezone || '');
         setAllowSignup(data.allowSignup === 'true');
+        setAvatarMaxSize(data.avatarMaxSize || '2');
+        setAvatarAllowedFormats(
+          data.avatarAllowedFormats || 'image/png,image/jpeg,image/jpg,image/gif,image/webp'
+        );
+        setAvatarMaxDimension(data.avatarMaxDimension || '1024');
+        setAvatarMinDimension(data.avatarMinDimension || '64');
       });
   }, []);
 
@@ -26,7 +36,16 @@ const AdminSettings = () => {
     await fetch('/api/settings', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ siteName, locale, timezone, allowSignup }),
+      body: JSON.stringify({
+        siteName,
+        locale,
+        timezone,
+        allowSignup,
+        avatarMaxSize,
+        avatarAllowedFormats,
+        avatarMaxDimension,
+        avatarMinDimension,
+      }),
     });
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
@@ -65,6 +84,33 @@ const AdminSettings = () => {
           />
           <span>Signup erlauben</span>
         </label>
+        <input
+          className="border p-2"
+          type="number"
+          placeholder="Max. Avatargröße (MB)"
+          value={avatarMaxSize}
+          onChange={(e) => setAvatarMaxSize(e.target.value)}
+        />
+        <input
+          className="border p-2"
+          placeholder="Erlaubte Avatar-Formate (MIME, Komma getrennt)"
+          value={avatarAllowedFormats}
+          onChange={(e) => setAvatarAllowedFormats(e.target.value)}
+        />
+        <input
+          className="border p-2"
+          type="number"
+          placeholder="Max. Avatar-Dimension (px)"
+          value={avatarMaxDimension}
+          onChange={(e) => setAvatarMaxDimension(e.target.value)}
+        />
+        <input
+          className="border p-2"
+          type="number"
+          placeholder="Min. Avatar-Dimension (px)"
+          value={avatarMinDimension}
+          onChange={(e) => setAvatarMinDimension(e.target.value)}
+        />
         <button className="bg-blue-500 text-white p-2">Speichern</button>
         {saved && <p className="text-green-600">Gespeichert!</p>}
         <button
