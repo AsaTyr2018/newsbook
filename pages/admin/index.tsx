@@ -68,7 +68,11 @@ export async function getServerSideProps(context: any) {
     };
   }
 
-  const uniqueViews = await prisma.pageView.count({ distinct: ['ip'] });
+  const uniqueViewsData = await prisma.pageView.groupBy({
+    by: ['ip'],
+    _count: { _all: true },
+  });
+  const uniqueViews = uniqueViewsData.length;
   const postsCount = await prisma.post.count();
   const commentsCount = await prisma.comment.count();
 
