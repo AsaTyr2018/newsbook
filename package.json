@@ -8,6 +8,7 @@
     "start": "node scripts/clearMaintenance.js && next start",
     "lint": "next lint",
     "test": "echo \"No tests specified\" && exit 0",
+    "maintenance:release": "node scripts/clearMaintenance.js",
     "prisma:migrate": "prisma migrate dev",
     "prisma:generate": "prisma generate",
     "prisma:seed": "node prisma/seed.js"
