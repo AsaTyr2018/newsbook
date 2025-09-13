@@ -80,9 +80,13 @@ export const getServerSideProps: GetServerSideProps<HomeProps> = async () => {
           typeof p.content === 'string' ? JSON.parse(p.content) : (p.content as any)
         );
         const html = Array.isArray(parsed) ? parsed : [parsed];
-        const text = html.join('').replace(/<[^>]+>/g, '');
+        const text = html
+          .join(' ')
+          .replace(/<[^>]+>/g, '')
+          .replace(/\s+/g, ' ')
+          .trim();
         const previewText =
-          text.length > 150 ? text.slice(0, 150).trimEnd() + '...' : text;
+          text.length > 300 ? text.slice(0, 300).trimEnd() + '...' : text;
         return {
           ...p,
           createdAt: p.createdAt.toISOString(),
