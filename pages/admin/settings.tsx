@@ -43,12 +43,14 @@ const AdminSettings = () => {
           value={siteName}
           onChange={(e) => setSiteName(e.target.value)}
         />
-        <input
+        <select
           className="border p-2"
-          placeholder="Locale (z.B. de-DE)"
           value={locale}
           onChange={(e) => setLocale(e.target.value)}
-        />
+        >
+          <option value="de-DE">Deutsch (de-DE)</option>
+          <option value="en-EN">English (en-EN)</option>
+        </select>
         <input
           className="border p-2"
           placeholder="Zeitzone (z.B. Europe/Berlin)"

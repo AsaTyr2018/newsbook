@@ -1,0 +1,23 @@
+{
+  "nav_home": "Startseite",
+  "nav_profile": "Profil",
+  "nav_backend": "Backend",
+  "nav_posts": "Beiträge",
+  "nav_moderation": "Moderation",
+  "nav_login": "Login",
+  "nav_signup": "Signup",
+  "nav_logout": "Logout",
+  "nav_theme_dark": "Dark",
+  "nav_theme_light": "Light",
+  "profile_title": "Profil",
+  "profile_tab_profile": "Profil",
+  "profile_tab_option": "Option",
+  "profile_tab_password": "Passwort",
+  "profile_language": "Sprache",
+  "profile_language_save": "Sprache speichern",
+  "profile_saved": "Gespeichert!",
+  "profile_save": "Speichern",
+  "profile_theme": "Light/Dark Mode",
+  "profile_dark_mode": "Dark Mode",
+  "profile_light_mode": "Light Mode"
+}

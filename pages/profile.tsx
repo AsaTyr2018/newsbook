@@ -1,10 +1,13 @@
 import { getSession, useSession } from 'next-auth/react';
 import { useContext, useEffect, useState, FormEvent } from 'react';
 import { ThemeContext } from '../lib/ThemeContext';
+import { LocaleContext, Locale } from '../lib/LocaleContext';
+import { t } from '../lib/i18n';
 
 const Profile = () => {
   useSession();
   const { theme, toggleTheme } = useContext(ThemeContext);
+  const { locale, setLocale } = useContext(LocaleContext);
   const [tab, setTab] = useState<'profile' | 'option' | 'password'>('profile');
   const [name, setName] = useState('');
   const [bio, setBio] = useState('');
@@ -15,6 +18,7 @@ const Profile = () => {
   const [newPassword, setNewPassword] = useState('');
   const [confirm, setConfirm] = useState('');
   const [error, setError] = useState('');
+  const [userLocale, setUserLocale] = useState<Locale>(locale);
 
   useEffect(() => {
     fetch('/api/profile')
@@ -23,8 +27,12 @@ const Profile = () => {
         setName(data?.name || '');
         setBio(data?.bio || '');
         setImage(data?.image || '');
+        if (data?.locale) {
+          setUserLocale(data.locale);
+          setLocale(data.locale);
+        }
       });
-  }, []);
+  }, [setLocale]);
 
   const saveProfile = async (e: FormEvent) => {
     e.preventDefault();
@@ -69,27 +77,44 @@ const Profile = () => {
     }
   };
 
+  const saveLocale = async () => {
+    setError('');
+    const res = await fetch('/api/profile', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ locale: userLocale }),
+    });
+    const data = await res.json();
+    if (data.error) {
+      setError(data.error);
+    } else {
+      setLocale(userLocale);
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    }
+  };
+
   return (
     <div className="p-4 space-y-4">
-      <h1 className="text-2xl font-bold">Profil</h1>
+      <h1 className="text-2xl font-bold">{t(locale, 'profile_title')}</h1>
       <div className="flex gap-4 border-b">
         <button
           onClick={() => setTab('profile')}
           className={`pb-2 ${tab === 'profile' ? 'border-b-2 border-blue-500' : ''}`}
         >
-          Profil
+          {t(locale, 'profile_tab_profile')}
         </button>
         <button
           onClick={() => setTab('option')}
           className={`pb-2 ${tab === 'option' ? 'border-b-2 border-blue-500' : ''}`}
         >
-          Option
+          {t(locale, 'profile_tab_option')}
         </button>
         <button
           onClick={() => setTab('password')}
           className={`pb-2 ${tab === 'password' ? 'border-b-2 border-blue-500' : ''}`}
         >
-          Passwort
+          {t(locale, 'profile_tab_password')}
         </button>
       </div>
 
@@ -113,21 +138,42 @@ const Profile = () => {
             value={image}
             onChange={(e) => setImage(e.target.value)}
           />
-          <button className="bg-blue-500 text-white p-2">Speichern</button>
-          {saved && <p className="text-green-600">Gespeichert!</p>}
+          <button className="bg-blue-500 text-white p-2">{t(locale, 'profile_save')}</button>
+          {saved && <p className="text-green-600">{t(locale, 'profile_saved')}</p>}
           {error && <p className="text-red-600">{error}</p>}
         </form>
       )}
 
       {tab === 'option' && (
         <div className="space-y-2">
-          <p className="mb-2">Light/Dark Mode</p>
-          <button
-            onClick={toggleTheme}
-            className="px-3 py-1 border rounded bg-gray-100 dark:bg-gray-800 dark:border-gray-700"
-          >
-            {theme === 'light' ? 'Dark Mode' : 'Light Mode'}
-          </button>
+          <div>
+            <p className="mb-2">{t(locale, 'profile_language')}</p>
+            <select
+              className="border p-2"
+              value={userLocale}
+              onChange={(e) => setUserLocale(e.target.value as Locale)}
+            >
+              <option value="de-DE">Deutsch</option>
+              <option value="en-EN">English</option>
+            </select>
+            <button
+              onClick={saveLocale}
+              className="px-3 py-1 border rounded bg-gray-100 dark:bg-gray-800 dark:border-gray-700 mt-2"
+            >
+              {t(locale, 'profile_language_save')}
+            </button>
+          </div>
+          <div>
+            <p className="mb-2">{t(locale, 'profile_theme')}</p>
+            <button
+              onClick={toggleTheme}
+              className="px-3 py-1 border rounded bg-gray-100 dark:bg-gray-800 dark:border-gray-700"
+            >
+              {theme === 'light' ? t(locale, 'profile_dark_mode') : t(locale, 'profile_light_mode')}
+            </button>
+          </div>
+          {saved && <p className="text-green-600">{t(locale, 'profile_saved')}</p>}
+          {error && <p className="text-red-600">{error}</p>}
         </div>
       )}
 
@@ -172,8 +218,8 @@ const Profile = () => {
             value={confirm}
             onChange={(e) => setConfirm(e.target.value)}
           />
-          <button className="bg-blue-500 text-white p-2">Speichern</button>
-          {saved && <p className="text-green-600">Gespeichert!</p>}
+          <button className="bg-blue-500 text-white p-2">{t(locale, 'profile_save')}</button>
+          {saved && <p className="text-green-600">{t(locale, 'profile_saved')}</p>}
           {error && <p className="text-red-600">{error}</p>}
         </form>
       )}
