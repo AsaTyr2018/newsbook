@@ -47,12 +47,15 @@ const Home: NextPage<HomeProps> = ({ posts }) => {
               {t(locale, 'post_tags')} {post.tags.map((t) => t.name).join(', ')}
             </p>
           )}
-          <p className="mt-2 whitespace-pre-line text-sm">
-            {post.preview}{' '}
+          <div className="mt-2 text-sm">
+            <div
+              className="prose max-w-none"
+              dangerouslySetInnerHTML={{ __html: post.preview }}
+            />
             <Link href={`/news/${post.slug}`} className="text-blue-600">
               {t(locale, 'post_view_all')}
             </Link>
-          </p>
+          </div>
           <Link href={`/news/${post.slug}#comments`} className="text-blue-600 text-sm">
             {t(locale, 'post_view_comments')}
           </Link>
@@ -79,14 +82,12 @@ export const getServerSideProps: GetServerSideProps<HomeProps> = async () => {
         const parsed = parser.parse(
           typeof p.content === 'string' ? JSON.parse(p.content) : (p.content as any)
         );
-        const html = Array.isArray(parsed) ? parsed.join('\n') : parsed;
-        const text = html.replace(/<[^>]+>/g, '');
-        const lines = text.split(/\r?\n/).filter((line) => line.trim() !== '');
+        const html = Array.isArray(parsed) ? parsed : [parsed];
         return {
           ...p,
           createdAt: p.createdAt.toISOString(),
           updatedAt: p.updatedAt.toISOString(),
-          preview: lines.slice(0, 10).join('\n'),
+          preview: html.slice(0, 3).join('\n'),
         };
       }),
     },
