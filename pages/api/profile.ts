@@ -80,8 +80,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         });
       });
 
-        const name = (fields.name as string) || undefined;
-        const bio = (fields.bio as string) || undefined;
+        const nameField = fields.name;
+        const bioField = fields.bio;
+        const name = Array.isArray(nameField) ? nameField[0] : nameField || undefined;
+        const bio = Array.isArray(bioField) ? bioField[0] : bioField || undefined;
         const fileData = files.image;
         const file = Array.isArray(fileData)
           ? (fileData[0] as formidable.File)
