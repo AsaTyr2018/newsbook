@@ -48,10 +48,7 @@ const Home: NextPage<HomeProps> = ({ posts }) => {
             </p>
           )}
           <div className="mt-2 text-sm">
-            <div
-              className="prose max-w-none"
-              dangerouslySetInnerHTML={{ __html: post.preview }}
-            />
+            <div className="prose max-w-none">{post.preview}</div>
             <Link href={`/news/${post.slug}`} className="text-blue-600">
               {t(locale, 'post_view_all')}
             </Link>
@@ -83,11 +80,14 @@ export const getServerSideProps: GetServerSideProps<HomeProps> = async () => {
           typeof p.content === 'string' ? JSON.parse(p.content) : (p.content as any)
         );
         const html = Array.isArray(parsed) ? parsed : [parsed];
+        const text = html.join('').replace(/<[^>]+>/g, '');
+        const previewText =
+          text.length > 150 ? text.slice(0, 150).trimEnd() + '...' : text;
         return {
           ...p,
           createdAt: p.createdAt.toISOString(),
           updatedAt: p.updatedAt.toISOString(),
-          preview: html.slice(0, 3).join('\n'),
+          preview: previewText,
         };
       }),
     },
