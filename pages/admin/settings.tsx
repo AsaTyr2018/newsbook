@@ -93,7 +93,7 @@ const AdminSettings = () => {
         />
         <input
           className="border p-2"
-          placeholder="Erlaubte Avatar-Formate (MIME, Komma getrennt)"
+          placeholder="Erlaubte Avatar-Formate (MIME oder Dateiendungen, Komma getrennt)"
           value={avatarAllowedFormats}
           onChange={(e) => setAvatarAllowedFormats(e.target.value)}
         />
