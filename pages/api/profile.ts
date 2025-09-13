@@ -80,9 +80,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         });
       });
 
-      const name = (fields.name as string) || undefined;
-      const bio = (fields.bio as string) || undefined;
-      const file = files.image as formidable.File | undefined;
+        const name = (fields.name as string) || undefined;
+        const bio = (fields.bio as string) || undefined;
+        const fileData = files.image;
+        const file = Array.isArray(fileData)
+          ? (fileData[0] as formidable.File)
+          : (fileData as formidable.File | undefined);
 
       debug('parsed form', {
         fields,
