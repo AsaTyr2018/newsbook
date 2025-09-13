@@ -1,7 +1,10 @@
 import { GetServerSideProps } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useContext } from 'react';
 import { prisma } from '../../lib/prisma';
+import { LocaleContext } from '../../lib/LocaleContext';
+import { t } from '../../lib/i18n';
 
 interface UserProfileProps {
   user:
@@ -18,7 +21,8 @@ interface UserProfileProps {
 }
 
 const UserProfile = ({ user }: UserProfileProps) => {
-  if (!user) return <div className="p-4">Benutzer nicht gefunden.</div>;
+  const { locale } = useContext(LocaleContext);
+  if (!user) return <div className="p-4">{t(locale, 'user_not_found')}</div>;
   return (
     <div className="p-4 max-w-2xl mx-auto">
       <div className="flex items-center gap-4 mb-6">
@@ -38,13 +42,13 @@ const UserProfile = ({ user }: UserProfileProps) => {
         <div>
           <h1 className="text-2xl font-bold">{user.name || user.username}</h1>
           <p className="text-gray-500">
-            Registriert seit {new Date(user.createdAt).toLocaleDateString()}
+            {t(locale, 'user_registered_since')} {new Date(user.createdAt).toLocaleDateString()}
           </p>
-          <p className="text-gray-500">Gruppe: {user.role}</p>
+          <p className="text-gray-500">{t(locale, 'user_group')} {user.role}</p>
         </div>
       </div>
       {user.bio && <p className="mb-6">{user.bio}</p>}
-      <h2 className="text-xl font-semibold mb-2">Beiträge</h2>
+      <h2 className="text-xl font-semibold mb-2">{t(locale, 'user_posts_title')}</h2>
       {user.posts.length ? (
         <ul className="list-disc pl-5 space-y-1">
           {user.posts.map((post) => (
@@ -56,7 +60,7 @@ const UserProfile = ({ user }: UserProfileProps) => {
           ))}
         </ul>
       ) : (
-        <p>Keine Beiträge vorhanden.</p>
+        <p>{t(locale, 'user_posts_none')}</p>
       )}
     </div>
   );

@@ -1,6 +1,8 @@
 import { getSession } from 'next-auth/react';
-import { FormEvent, useEffect, useState } from 'react';
+import { FormEvent, useEffect, useState, useContext } from 'react';
 import AdminNav from '../../components/AdminNav';
+import { LocaleContext } from '../../lib/LocaleContext';
+import { t } from '../../lib/i18n';
 
 interface Tag {
   id: number;
@@ -10,6 +12,7 @@ interface Tag {
 const AdminTags = () => {
   const [tags, setTags] = useState<Tag[]>([]);
   const [name, setName] = useState('');
+  const { locale } = useContext(LocaleContext);
 
   const load = async () => {
     const res = await fetch('/api/tags');
@@ -39,22 +42,22 @@ const AdminTags = () => {
   return (
     <div className="p-4">
       <AdminNav />
-      <h1 className="text-2xl font-bold mb-4">Tags</h1>
+      <h1 className="text-2xl font-bold mb-4">{t(locale, 'admin_tags_title')}</h1>
       <form onSubmit={add} className="flex gap-2 mb-4">
         <input
           className="border p-2"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="Name"
+          placeholder={t(locale, 'admin_tag_name_placeholder')}
         />
-        <button className="bg-blue-500 text-white p-2">Hinzufügen</button>
+        <button className="bg-blue-500 text-white p-2">{t(locale, 'admin_tag_add')}</button>
       </form>
       <ul className="flex flex-col gap-2">
         {tags.map((tag) => (
           <li key={tag.id} className="border p-2 flex justify-between">
             {tag.name}
             <button onClick={() => del(tag.id)} className="text-red-600">
-              Löschen
+              {t(locale, 'admin_tag_delete')}
             </button>
           </li>
         ))}

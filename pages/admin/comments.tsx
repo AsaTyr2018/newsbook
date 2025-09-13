@@ -1,6 +1,8 @@
 import { getSession } from 'next-auth/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import AdminNav from '../../components/AdminNav';
+import { LocaleContext } from '../../lib/LocaleContext';
+import { t } from '../../lib/i18n';
 
 interface Comment {
   id: number;
@@ -12,6 +14,7 @@ interface Comment {
 
 const AdminComments = () => {
   const [comments, setComments] = useState<Comment[]>([]);
+  const { locale } = useContext(LocaleContext);
 
   const load = async () => {
     const res = await fetch('/api/comments?status=PENDING');
@@ -39,15 +42,15 @@ const AdminComments = () => {
   return (
     <div className="p-4">
       <AdminNav />
-      <h1 className="text-2xl font-bold mb-4">Kommentare</h1>
+      <h1 className="text-2xl font-bold mb-4">{t(locale, 'admin_comments_title')}</h1>
       <ul className="flex flex-col gap-2">
         {comments.map((c) => (
           <li key={c.id} className="border p-2 flex justify-between items-center">
             <div>
               <p className="font-semibold">{c.name}</p>
               <p className="text-sm">{c.message}</p>
-              <p className="text-xs text-gray-600">Zu: {c.post.title}</p>
-              <p className="text-xs">Status: {c.status}</p>
+              <p className="text-xs text-gray-600">{t(locale, 'admin_comments_to_post')} {c.post.title}</p>
+              <p className="text-xs">{t(locale, 'admin_comments_status')} {c.status}</p>
             </div>
             <div className="flex gap-2">
               {c.status !== 'APPROVED' && (
@@ -55,7 +58,7 @@ const AdminComments = () => {
                   onClick={() => setStatus(c.id, 'APPROVED')}
                   className="text-green-600"
                 >
-                  Freigeben
+                  {t(locale, 'admin_comments_approve')}
                 </button>
               )}
               {c.status !== 'REJECTED' && (
@@ -63,11 +66,11 @@ const AdminComments = () => {
                   onClick={() => setStatus(c.id, 'REJECTED')}
                   className="text-yellow-600"
                 >
-                  Ablehnen
+                  {t(locale, 'admin_comments_reject')}
                 </button>
               )}
               <button onClick={() => del(c.id)} className="text-red-600">
-                Löschen
+                {t(locale, 'admin_comments_delete')}
               </button>
             </div>
           </li>

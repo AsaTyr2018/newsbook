@@ -1,5 +1,7 @@
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
+import { useEffect, useContext } from 'react';
+import { LocaleContext } from '../lib/LocaleContext';
+import { t } from '../lib/i18n';
 
 interface Props {
   currentPath: string;
@@ -7,6 +9,7 @@ interface Props {
 
 const Maintenance = ({ currentPath }: Props) => {
   const router = useRouter();
+  const { locale } = useContext(LocaleContext);
   useEffect(() => {
     const interval = setInterval(async () => {
       try {
@@ -25,7 +28,7 @@ const Maintenance = ({ currentPath }: Props) => {
 
   return (
     <div className="flex items-center justify-center min-h-screen">
-      <h1 className="text-2xl">Be right back...</h1>
+      <h1 className="text-2xl">{t(locale, 'maintenance_message')}</h1>
     </div>
   );
 };

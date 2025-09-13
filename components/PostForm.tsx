@@ -1,6 +1,8 @@
-import { FormEvent, useEffect, useState } from 'react';
+import { FormEvent, useEffect, useState, useContext } from 'react';
 import type { OutputData } from '@editorjs/editorjs';
 import dynamic from 'next/dynamic';
+import { LocaleContext } from '../lib/LocaleContext';
+import { t } from '../lib/i18n';
 
 const Editor = dynamic(() => import('./Editor'), { ssr: false });
 
@@ -37,6 +39,7 @@ const PostForm = ({
   const [tagIds, setTagIds] = useState<number[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [tags, setTags] = useState<Tag[]>([]);
+  const { locale } = useContext(LocaleContext);
 
   useEffect(() => {
     fetch('/api/categories')
@@ -89,7 +92,7 @@ const PostForm = ({
     <form onSubmit={handleSubmit} className="flex flex-col gap-2 mb-4">
       <input
         className="border p-2"
-        placeholder="Titel"
+        placeholder={t(locale, 'post_form_title_placeholder')}
         value={title}
         onChange={(e) => setTitle(e.target.value)}
       />
@@ -101,7 +104,7 @@ const PostForm = ({
           setCategoryId(e.target.value ? Number(e.target.value) : undefined)
         }
       >
-        <option value="">Kategorie wählen</option>
+        <option value="">{t(locale, 'post_form_select_category')}</option>
         {categories.map((cat) => (
           <option key={cat.id} value={cat.id}>
             {cat.name}
@@ -122,7 +125,7 @@ const PostForm = ({
       </div>
       <div className="flex gap-2">
         <button type="submit" className="bg-blue-500 text-white p-2">
-          Speichern
+          {t(locale, 'post_form_save')}
         </button>
         {post && onCancel && (
           <button
@@ -136,7 +139,7 @@ const PostForm = ({
             }}
             className="bg-gray-500 text-white p-2"
           >
-            Abbrechen
+            {t(locale, 'post_form_cancel')}
           </button>
         )}
       </div>

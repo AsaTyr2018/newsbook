@@ -1,9 +1,11 @@
 import { getSession, useSession } from 'next-auth/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import AdminNav from '../../components/AdminNav';
 import PostForm from '../../components/PostForm';
 import PostList from '../../components/PostList';
 import type { OutputData } from '@editorjs/editorjs';
+import { LocaleContext } from '../../lib/LocaleContext';
+import { t } from '../../lib/i18n';
 
 interface Post {
   id: number;
@@ -19,6 +21,7 @@ const AdminPosts = () => {
   const { data: session } = useSession();
   const [posts, setPosts] = useState<Post[]>([]);
   const [editing, setEditing] = useState<Post | null>(null);
+  const { locale } = useContext(LocaleContext);
 
   const load = async () => {
     const res = await fetch('/api/posts');
@@ -37,7 +40,7 @@ const AdminPosts = () => {
   return (
     <div className="p-4">
       <AdminNav />
-      <h1 className="text-2xl font-bold mb-4">Beiträge verwalten</h1>
+      <h1 className="text-2xl font-bold mb-4">{t(locale, 'admin_posts_title')}</h1>
       <PostForm
         onSuccess={() => {
           setEditing(null);
