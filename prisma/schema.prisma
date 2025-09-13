@@ -93,3 +93,9 @@ model PageView {
   post      Post?    @relation(fields: [postId], references: [id])
   postId    Int?
 }
+
+model TrackingConsent {
+  id        Int      @id @default(autoincrement())
+  ip        String   @unique
+  createdAt DateTime @default(now())
+}

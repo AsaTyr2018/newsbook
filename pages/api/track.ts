@@ -11,6 +11,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const ipHeader = (req.headers['x-forwarded-for'] as string) || req.socket.remoteAddress || '';
   const ip = ipHeader.split(',')[0].trim();
 
+  const consent = await prisma.trackingConsent.findUnique({ where: { ip } });
+  if (!consent) {
+    res.status(403).json({ ok: false });
+    return;
+  }
+
   let postId: number | undefined;
   const match = /^\/news\/([^/?#]+)/.exec(path);
   if (match) {

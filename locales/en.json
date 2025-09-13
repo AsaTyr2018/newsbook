@@ -128,5 +128,8 @@
   "user_group": "Group:",
   "user_posts_title": "Posts",
   "user_posts_none": "No posts available.",
-  "maintenance_message": "Be right back..."
+  "maintenance_message": "Be right back...",
+  "consent_message": "We collect usage statistics to display content correctly. If you decline, you cannot use the site.",
+  "consent_accept": "Accept",
+  "consent_decline": "Decline"
 }
