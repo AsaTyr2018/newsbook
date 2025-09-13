@@ -44,6 +44,7 @@ model Post {
   authorId   Int?
   tags       Tag[]     @relation("PostTags")
   comments   Comment[]
+  pageViews  PageView[]
 }
 
 model Category {
@@ -82,4 +83,13 @@ model Setting {
   id    Int    @id @default(autoincrement())
   key   String @unique
   value String
+}
+
+model PageView {
+  id        Int      @id @default(autoincrement())
+  path      String
+  ip        String
+  createdAt DateTime @default(now())
+  post      Post?    @relation(fields: [postId], references: [id])
+  postId    Int?
 }

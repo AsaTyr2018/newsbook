@@ -41,6 +41,21 @@ export default function MyApp({ Component, pageProps: { session, ...pageProps } 
   }, [router.asPath]);
 
   useEffect(() => {
+    const track = (url: string) => {
+      fetch('/api/track', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ path: url }),
+      }).catch(() => {});
+    };
+    track(router.asPath);
+    router.events.on('routeChangeComplete', track);
+    return () => {
+      router.events.off('routeChangeComplete', track);
+    };
+  }, [router]);
+
+  useEffect(() => {
     const stored = (typeof window !== 'undefined' && window.localStorage.getItem('theme')) as Theme | null;
     if (stored) {
       setTheme(stored);
