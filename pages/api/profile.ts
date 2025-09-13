@@ -42,10 +42,24 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       settings.forEach((s) => {
         configMap[s.key] = s.value;
       });
-      const allowedTypes = (configMap.avatarAllowedFormats ||
+      const allowedFormats = (configMap.avatarAllowedFormats ||
         'image/png,image/jpeg,image/jpg,image/gif,image/webp')
         .split(',')
-        .map((t) => t.trim().toLowerCase());
+        .map((t) => t.trim().toLowerCase())
+        .filter(Boolean);
+
+      const normalizeMime = (type: string) => {
+        if (type === 'image/jpg' || type === 'image/pjpeg') return 'image/jpeg';
+        if (type === 'image/x-png') return 'image/png';
+        return type;
+      };
+
+      const allowedMimes = allowedFormats
+        .filter((f) => f.includes('/'))
+        .map((f) => normalizeMime(f));
+      const allowedExts = allowedFormats
+        .filter((f) => !f.includes('/'))
+        .map((f) => f.replace(/^\./, ''));
       const maxSize = parseInt(configMap.avatarMaxSize || '2', 10) * 1024 * 1024;
       const maxDim = parseInt(configMap.avatarMaxDimension || '1024', 10);
       const minDim = parseInt(configMap.avatarMinDimension || '64', 10);
@@ -64,8 +78,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       let imagePath: string | undefined;
       if (file) {
-        const fileType = (file.mimetype || '').split(';')[0].toLowerCase();
-        if (!allowedTypes.includes(fileType)) {
+        const fileType = normalizeMime((file.mimetype || '').split(';')[0].toLowerCase());
+        const fileExt = path
+          .extname(file.originalFilename || '')
+          .replace('.', '')
+          .toLowerCase();
+        if (!allowedMimes.includes(fileType) && !allowedExts.includes(fileExt)) {
           return res.status(400).json({ error: 'Invalid file type' });
         }
         if (file.size > maxSize) {
@@ -78,8 +96,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           'image/jpg': 'jpg',
           'image/gif': 'gif',
           'image/webp': 'webp',
+          'image/pjpeg': 'jpg',
+          'image/x-png': 'png',
         };
-        const ext = mimeToExt[fileType];
+        const ext = mimeToExt[fileType] || mimeToExt[`image/${fileExt}`];
         if (!ext) {
           return res.status(400).json({ error: 'Unsupported format' });
         }
