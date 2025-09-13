@@ -1,6 +1,7 @@
 import { GetServerSideProps, NextPage } from 'next';
 import Link from 'next/link';
 import { useContext } from 'react';
+import edjsHTML from 'editorjs-html';
 import { LocaleContext } from '../lib/LocaleContext';
 import { t } from '../lib/i18n';
 import { prisma } from '../lib/prisma';
@@ -14,6 +15,7 @@ interface Post {
   author?: { username: string; name: string | null } | null;
   category?: { name: string } | null;
   tags: { id: number; name: string }[];
+  preview: string;
 }
 
 interface HomeProps {
@@ -37,14 +39,20 @@ const Home: NextPage<HomeProps> = ({ posts }) => {
               </Link>
             ) : (
               t(locale, 'post_unknown_author')
-            )}{' '}
-            | {t(locale, 'post_category')} {post.category?.name || t(locale, 'post_no_category')}
+          )}{' '}
+          | {t(locale, 'post_category')} {post.category?.name || t(locale, 'post_no_category')}
           </p>
           {post.tags.length > 0 && (
             <p className="text-sm">
               {t(locale, 'post_tags')} {post.tags.map((t) => t.name).join(', ')}
             </p>
           )}
+          <p className="mt-2 whitespace-pre-line text-sm">
+            {post.preview}{' '}
+            <Link href={`/news/${post.slug}`} className="text-blue-600">
+              {t(locale, 'post_view_all')}
+            </Link>
+          </p>
           <Link href={`/news/${post.slug}#comments`} className="text-blue-600 text-sm">
             {t(locale, 'post_view_comments')}
           </Link>
@@ -55,6 +63,7 @@ const Home: NextPage<HomeProps> = ({ posts }) => {
 };
 
 export const getServerSideProps: GetServerSideProps<HomeProps> = async () => {
+  const parser = edjsHTML();
   const posts = await prisma.post.findMany({
     include: {
       author: { select: { username: true, name: true } },
@@ -63,13 +72,23 @@ export const getServerSideProps: GetServerSideProps<HomeProps> = async () => {
     },
     orderBy: { createdAt: 'desc' },
   });
+
   return {
     props: {
-      posts: posts.map((p) => ({
-        ...p,
-        createdAt: p.createdAt.toISOString(),
-        updatedAt: p.updatedAt.toISOString(),
-      })),
+      posts: posts.map((p) => {
+        const parsed = parser.parse(
+          typeof p.content === 'string' ? JSON.parse(p.content) : (p.content as any)
+        );
+        const html = Array.isArray(parsed) ? parsed.join('\n') : parsed;
+        const text = html.replace(/<[^>]+>/g, '');
+        const lines = text.split(/\r?\n/).filter((line) => line.trim() !== '');
+        return {
+          ...p,
+          createdAt: p.createdAt.toISOString(),
+          updatedAt: p.updatedAt.toISOString(),
+          preview: lines.slice(0, 10).join('\n'),
+        };
+      }),
     },
   };
 };
