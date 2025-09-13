@@ -12,6 +12,7 @@ const Profile = () => {
   const [name, setName] = useState('');
   const [bio, setBio] = useState('');
   const [image, setImage] = useState('');
+  const [avatar, setAvatar] = useState<File | null>(null);
   const [saved, setSaved] = useState(false);
   const [challenge, setChallenge] = useState('');
   const [oldPassword, setOldPassword] = useState('');
@@ -37,15 +38,21 @@ const Profile = () => {
   const saveProfile = async (e: FormEvent) => {
     e.preventDefault();
     setError('');
+    const formData = new FormData();
+    formData.append('name', name);
+    formData.append('bio', bio);
+    if (avatar) {
+      formData.append('image', avatar);
+    }
     const res = await fetch('/api/profile', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, bio, image }),
+      body: formData,
     });
     const data = await res.json();
     if (data.error) {
       setError(data.error);
     } else {
+      if (data.image) setImage(data.image);
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
     }
@@ -132,11 +139,13 @@ const Profile = () => {
             value={bio}
             onChange={(e) => setBio(e.target.value)}
           />
+          {image && (
+            <img src={image} alt="avatar" className="w-24 h-24 rounded-full" />
+          )}
           <input
-            className="border p-2"
-            placeholder="Avatar-URL"
-            value={image}
-            onChange={(e) => setImage(e.target.value)}
+            type="file"
+            accept="image/png,image/jpeg,image/gif,image/webp"
+            onChange={(e) => setAvatar(e.target.files?.[0] || null)}
           />
           <button className="bg-blue-500 text-white p-2">{t(locale, 'profile_save')}</button>
           {saved && <p className="text-green-600">{t(locale, 'profile_saved')}</p>}
