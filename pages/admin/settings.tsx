@@ -1,10 +1,12 @@
 import { getSession } from 'next-auth/react';
-import { FormEvent, useEffect, useState } from 'react';
+import { FormEvent, useEffect, useState, useContext } from 'react';
 import AdminNav from '../../components/AdminNav';
+import { LocaleContext } from '../../lib/LocaleContext';
+import { t } from '../../lib/i18n';
 
 const AdminSettings = () => {
   const [siteName, setSiteName] = useState('');
-  const [locale, setLocale] = useState('');
+  const [siteLocale, setSiteLocale] = useState('');
   const [timezone, setTimezone] = useState('');
   const [allowSignup, setAllowSignup] = useState(false);
   const [avatarMaxSize, setAvatarMaxSize] = useState('');
@@ -13,13 +15,14 @@ const AdminSettings = () => {
   const [avatarMinDimension, setAvatarMinDimension] = useState('');
   const [saved, setSaved] = useState(false);
   const [updating, setUpdating] = useState(false);
+  const { locale } = useContext(LocaleContext);
 
   useEffect(() => {
     fetch('/api/settings')
       .then((res) => res.json())
       .then((data) => {
         setSiteName(data.siteName || '');
-        setLocale(data.locale || '');
+        setSiteLocale(data.locale || '');
         setTimezone(data.timezone || '');
         setAllowSignup(data.allowSignup === 'true');
         setAvatarMaxSize(data.avatarMaxSize || '2');
@@ -38,7 +41,7 @@ const AdminSettings = () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         siteName,
-        locale,
+        locale: siteLocale,
         timezone,
         allowSignup,
         avatarMaxSize,
@@ -54,25 +57,25 @@ const AdminSettings = () => {
   return (
     <div className="p-4">
       <AdminNav />
-      <h1 className="text-2xl font-bold mb-4">Einstellungen</h1>
+      <h1 className="text-2xl font-bold mb-4">{t(locale, 'admin_settings_title')}</h1>
       <form onSubmit={save} className="flex flex-col gap-2 max-w-md">
         <input
           className="border p-2"
-          placeholder="Seitentitel"
+          placeholder={t(locale, 'admin_settings_site_title_placeholder')}
           value={siteName}
           onChange={(e) => setSiteName(e.target.value)}
         />
         <select
           className="border p-2"
-          value={locale}
-          onChange={(e) => setLocale(e.target.value)}
+          value={siteLocale}
+          onChange={(e) => setSiteLocale(e.target.value)}
         >
           <option value="de-DE">Deutsch (de-DE)</option>
           <option value="en-EN">English (en-EN)</option>
         </select>
         <input
           className="border p-2"
-          placeholder="Zeitzone (z.B. Europe/Berlin)"
+          placeholder={t(locale, 'admin_settings_timezone_placeholder')}
           value={timezone}
           onChange={(e) => setTimezone(e.target.value)}
         />
@@ -82,37 +85,37 @@ const AdminSettings = () => {
             checked={allowSignup}
             onChange={(e) => setAllowSignup(e.target.checked)}
           />
-          <span>Signup erlauben</span>
+          <span>{t(locale, 'admin_settings_allow_signup')}</span>
         </label>
         <input
           className="border p-2"
           type="number"
-          placeholder="Max. Avatargröße (MB)"
+          placeholder={t(locale, 'admin_settings_avatar_max_size_placeholder')}
           value={avatarMaxSize}
           onChange={(e) => setAvatarMaxSize(e.target.value)}
         />
         <input
           className="border p-2"
-          placeholder="Erlaubte Avatar-Formate (MIME oder Dateiendungen, Komma getrennt)"
+          placeholder={t(locale, 'admin_settings_avatar_allowed_formats_placeholder')}
           value={avatarAllowedFormats}
           onChange={(e) => setAvatarAllowedFormats(e.target.value)}
         />
         <input
           className="border p-2"
           type="number"
-          placeholder="Max. Avatar-Dimension (px)"
+          placeholder={t(locale, 'admin_settings_avatar_max_dimension_placeholder')}
           value={avatarMaxDimension}
           onChange={(e) => setAvatarMaxDimension(e.target.value)}
         />
         <input
           className="border p-2"
           type="number"
-          placeholder="Min. Avatar-Dimension (px)"
+          placeholder={t(locale, 'admin_settings_avatar_min_dimension_placeholder')}
           value={avatarMinDimension}
           onChange={(e) => setAvatarMinDimension(e.target.value)}
         />
-        <button className="bg-blue-500 text-white p-2">Speichern</button>
-        {saved && <p className="text-green-600">Gespeichert!</p>}
+        <button className="bg-blue-500 text-white p-2">{t(locale, 'admin_settings_save')}</button>
+        {saved && <p className="text-green-600">{t(locale, 'admin_settings_saved')}</p>}
         <button
           type="button"
           onClick={async () => {
@@ -122,9 +125,9 @@ const AdminSettings = () => {
           }}
           className="bg-gray-500 text-white p-2"
         >
-          Update
+          {t(locale, 'admin_settings_update')}
         </button>
-        {updating && <p className="text-blue-600">Aktualisiere...</p>}
+        {updating && <p className="text-blue-600">{t(locale, 'admin_settings_updating')}</p>}
       </form>
     </div>
   );

@@ -1,5 +1,8 @@
 import { GetServerSideProps, NextPage } from 'next';
 import Link from 'next/link';
+import { useContext } from 'react';
+import { LocaleContext } from '../lib/LocaleContext';
+import { t } from '../lib/i18n';
 import { prisma } from '../lib/prisma';
 
 interface Post {
@@ -18,6 +21,7 @@ interface HomeProps {
 }
 
 const Home: NextPage<HomeProps> = ({ posts }) => {
+  const { locale } = useContext(LocaleContext);
   return (
     <div className="p-4">
       {posts.map((post) => (
@@ -26,19 +30,23 @@ const Home: NextPage<HomeProps> = ({ posts }) => {
             <Link href={`/news/${post.slug}`}>{post.title}</Link>
           </h2>
           <p className="text-sm text-gray-500">
-            {new Date(post.createdAt).toLocaleDateString()} | Autor: {post.author ? (
+            {new Date(post.createdAt).toLocaleDateString()} | {t(locale, 'post_author')}{' '}
+            {post.author ? (
               <Link href={`/user/${post.author.username}`} className="text-blue-600">
                 {post.author.name || post.author.username}
               </Link>
             ) : (
-              'Unbekannt'
-            )} | Kategorie: {post.category?.name || 'Keine'}
+              t(locale, 'post_unknown_author')
+            )}{' '}
+            | {t(locale, 'post_category')} {post.category?.name || t(locale, 'post_no_category')}
           </p>
           {post.tags.length > 0 && (
-            <p className="text-sm">Tags: {post.tags.map((t) => t.name).join(', ')}</p>
+            <p className="text-sm">
+              {t(locale, 'post_tags')} {post.tags.map((t) => t.name).join(', ')}
+            </p>
           )}
           <Link href={`/news/${post.slug}#comments`} className="text-blue-600 text-sm">
-            Kommentare ansehen
+            {t(locale, 'post_view_comments')}
           </Link>
         </div>
       ))}

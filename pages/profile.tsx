@@ -129,13 +129,13 @@ const Profile = () => {
         <form onSubmit={saveProfile} className="flex flex-col gap-2 max-w-sm">
           <input
             className="border p-2"
-            placeholder="Name"
+            placeholder={t(locale, 'profile_name_placeholder')}
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
           <textarea
             className="border p-2"
-            placeholder="Bio"
+            placeholder={t(locale, 'profile_bio_placeholder')}
             value={bio}
             onChange={(e) => setBio(e.target.value)}
           />
@@ -189,41 +189,41 @@ const Profile = () => {
       {tab === 'password' && (
         <form onSubmit={savePassword} className="flex flex-col gap-2 max-w-sm">
           <div>
-            <label className="font-semibold">Challenge Phrase</label>
+            <label className="font-semibold">{t(locale, 'profile_challenge_label')}</label>
             <p className="text-sm text-gray-600 mb-1">
-              Eine geheime Phrase, um deine Identität z. B. beim Zurücksetzen des Passworts zu bestätigen.
+              {t(locale, 'profile_challenge_hint')}
             </p>
             <input
               className="border p-2 w-full"
-              placeholder="Challenge Phrase"
+              placeholder={t(locale, 'profile_challenge_label')}
               value={challenge}
               onChange={(e) => setChallenge(e.target.value)}
             />
           </div>
           <div>
-            <label className="font-semibold">Passwort ändern</label>
+            <label className="font-semibold">{t(locale, 'profile_change_password_label')}</label>
             <p className="text-sm text-gray-600 mb-1">
-              Ändere hier dein aktuelles Passwort.
+              {t(locale, 'profile_change_password_hint')}
             </p>
           </div>
           <input
             type="password"
             className="border p-2"
-            placeholder="Altes Passwort"
+            placeholder={t(locale, 'profile_old_password_placeholder')}
             value={oldPassword}
             onChange={(e) => setOldPassword(e.target.value)}
           />
           <input
             type="password"
             className="border p-2"
-            placeholder="Neues Passwort"
+            placeholder={t(locale, 'profile_new_password_placeholder')}
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
           />
           <input
             type="password"
             className="border p-2"
-            placeholder="Passwort bestätigen"
+            placeholder={t(locale, 'profile_confirm_password_placeholder')}
             value={confirm}
             onChange={(e) => setConfirm(e.target.value)}
           />

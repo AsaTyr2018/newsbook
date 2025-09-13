@@ -1,5 +1,7 @@
 import { getSession } from 'next-auth/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
+import { LocaleContext } from '../../lib/LocaleContext';
+import { t } from '../../lib/i18n';
 
 interface User {
   id: number;
@@ -11,6 +13,7 @@ interface User {
 
 const UsersPage = () => {
   const [users, setUsers] = useState<User[]>([]);
+  const { locale } = useContext(LocaleContext);
 
   const load = () => {
     fetch('/api/users')
@@ -42,14 +45,14 @@ const UsersPage = () => {
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Benutzer</h1>
+      <h1 className="text-2xl font-bold mb-4">{t(locale, 'admin_users_title')}</h1>
       <table className="w-full border">
         <thead>
           <tr className="border-b">
-            <th className="p-2 text-left">Username</th>
-            <th className="p-2 text-left">Name</th>
-            <th className="p-2 text-left">E-Mail</th>
-            <th className="p-2 text-left">Rolle</th>
+            <th className="p-2 text-left">{t(locale, 'admin_users_username')}</th>
+            <th className="p-2 text-left">{t(locale, 'admin_users_name')}</th>
+            <th className="p-2 text-left">{t(locale, 'admin_users_email')}</th>
+            <th className="p-2 text-left">{t(locale, 'admin_users_role')}</th>
             <th className="p-2"></th>
           </tr>
         </thead>
@@ -73,17 +76,17 @@ const UsersPage = () => {
                 </select>
               </td>
               <td className="p-2 text-right">
-                <button
-                  onClick={() => del(u.id)}
-                  className="text-red-600"
-                >
-                  Löschen
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+              <button
+                onClick={() => del(u.id)}
+                className="text-red-600"
+              >
+                {t(locale, 'admin_users_delete')}
+              </button>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
     </div>
   );
 };

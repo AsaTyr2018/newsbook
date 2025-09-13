@@ -1,5 +1,7 @@
-import { FormEvent, useEffect, useState, useCallback } from 'react';
+import { FormEvent, useEffect, useState, useCallback, useContext } from 'react';
 import { useSession } from 'next-auth/react';
+import { LocaleContext } from '../lib/LocaleContext';
+import { t } from '../lib/i18n';
 
 interface Comment {
   id: number;
@@ -13,6 +15,7 @@ const CommentSection = ({ postId }: { postId: number }) => {
   const [name, setName] = useState('');
   const [message, setMessage] = useState('');
   const { data: session } = useSession();
+  const { locale } = useContext(LocaleContext);
 
   const loadComments = useCallback(async () => {
     const res = await fetch(`/api/comments?postId=${postId}`);
@@ -38,7 +41,7 @@ const CommentSection = ({ postId }: { postId: number }) => {
 
   return (
     <div id="comments" className="mt-8">
-      <h3 className="text-lg font-semibold mb-2">Kommentare</h3>
+      <h3 className="text-lg font-semibold mb-2">{t(locale, 'comments_title')}</h3>
       {comments.length ? (
         <ul className="mb-4">
           {comments.map((c) => (
@@ -49,25 +52,25 @@ const CommentSection = ({ postId }: { postId: number }) => {
           ))}
         </ul>
       ) : (
-        <p className="mb-4 text-sm">Keine Kommentare vorhanden.</p>
+        <p className="mb-4 text-sm">{t(locale, 'comments_none')}</p>
       )}
       <form onSubmit={handleSubmit} className="flex flex-col gap-2">
         {!session && (
           <input
             className="border p-2"
-            placeholder="Name"
+            placeholder={t(locale, 'comment_placeholder_name')}
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
         )}
         <textarea
           className="border p-2"
-          placeholder="Kommentar"
+          placeholder={t(locale, 'comment_placeholder_message')}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
         />
         <button type="submit" className="bg-blue-500 text-white p-2">
-          Abschicken
+          {t(locale, 'comment_submit')}
         </button>
       </form>
     </div>
