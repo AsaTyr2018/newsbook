@@ -1,26 +1,26 @@
 # NewsBlogCMS
 
-NewsBlogCMS ist eine umfassende News-Blog-Anwendung auf Basis von Next.js, Tailwind CSS, Prisma und PostgreSQL. Über eine responsive Benutzeroberfläche und ein geschütztes Admin-Panel lassen sich Beiträge, Kategorien, Tags und Kommentare komfortabel verwalten.
+NewsBlogCMS is a comprehensive news blog application built with Next.js, Tailwind CSS, Prisma, and PostgreSQL. Its responsive interface and protected admin panel make it simple to manage posts, categories, tags, and comments.
 
-## Funktionen
+## Features
 
-### Benutzeroberfläche
-- Beitragsansicht unter `/news/[slug]` mit Titel, Datum, Inhalt, Kategorie, Tags und Kommentaren
-- Kommentarformular mit optionaler Moderation
-- Navigation über Kategorien (`/category/[slug]`) und Tags (`/tag/[slug]`)
-- Volltextsuche sowie Filterung nach Kategorie oder Tag
-- Responsive Layout mit optionalem Dark Mode
+### User Interface
+- Post view at `/news/[slug]` showing title, date, content, category, tags, and comments
+- Comment form with optional moderation
+- Navigation via categories (`/category/[slug]`) and tags (`/tag/[slug]`)
+- Full-text search and filtering by category or tag
+- Responsive layout with optional dark mode
 
-### Administrationsbereich
-- Anmeldung über NextAuth (Admin-only)
-- Erstellen, Bearbeiten, Löschen und Vorschau von Beiträgen im Editor.js-Editor
-- Automatische oder manuelle Slug-Generierung mit Kategorie- und Tag-Zuweisung
-- Verwaltung von Kategorien und Tags
-- Moderation und Löschung von Kommentaren
+### Administration Area
+- Sign in via NextAuth (admin only)
+- Create, edit, delete, and preview posts using the Editor.js editor
+- Automatic or manual slug generation with category and tag assignment
+- Manage categories and tags
+- Moderate and delete comments
 
 ## Installation
 
-Voraussetzungen: [Node.js](https://nodejs.org/) und [PostgreSQL](https://www.postgresql.org/).
+Requirements: [Node.js](https://nodejs.org/) and [PostgreSQL](https://www.postgresql.org/).
 
 ```bash
 git clone https://github.com/AsaTyr2018/newsbook/
@@ -28,31 +28,30 @@ cd newsbook
 ./scripts/setup.sh
 ```
 
-Das Setup-Skript installiert alle Abhängigkeiten, erstellt die `.env`, richtet die Datenbank ein und spielt Seed-Daten ein.
+The setup script installs all dependencies, creates the `.env`, sets up the database, and seeds initial data.
 
-## Entwicklung
+## Development
 
 ```bash
 npm run dev
-# oder für externen Zugriff
+# or for external access
 npx next dev -H 0.0.0.0 -p 3000
 ```
 
-Die Anwendung ist anschließend unter `http://localhost:3000` erreichbar.
+The app will then be available at `http://localhost:3000`.
 
-## Admin-Testkonto
+## Admin Test Account
 
-Der Seed erzeugt einen Admin-Benutzer mit Benutzername `admin` und Passwort `admin`. Der Admin-Bereich ist unter `/admin` verfügbar.
+The seed creates an admin user with username `admin` and password `admin`. The admin area is available at `/admin`.
 
-⚠️ Sicherheitshinweis: Wer admin/admin als Benutzername/Passwort auf einer Live-Installation lässt, hat den Hacker echt verdient. 
-Wirklich, änder das sofort!
+⚠️ Security warning: anyone who leaves admin/admin as the username/password on a live installation is just asking to get hacked. Seriously, change it immediately!
 
-## Rollenmodell
+## Roles
 
-- **Gast** – kann lesen und Kommentare verfassen (Moderation erforderlich)
-- **User** – kann lesen und Kommentare ohne Freigabe schreiben
-- **Autor** – kann Artikel erstellen
-- **Moderator** – kann Kommentare freigeben, ablehnen oder löschen
-- **Admin** – uneingeschränkte Rechte
+- **Guest** – can read and submit comments (requires moderation)
+- **User** – can read and post comments without approval
+- **Author** – can create articles
+- **Moderator** – can approve, reject, or delete comments
+- **Admin** – unrestricted access
 
-Anmeldungen können im Backend deaktiviert oder aktiviert werden.
+Registrations can be disabled or enabled in the backend.
