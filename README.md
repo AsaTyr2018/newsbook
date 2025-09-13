@@ -40,10 +40,20 @@ npx next dev -H 0.0.0.0 -p 3000
 
 The app will then be available at `http://localhost:3000`.
 
-## Maintenance Mode
+## Maintenance Mode and Updates
 
-When running the `/api/update` endpoint the site enters maintenance mode. If an update
-fails and the flag is not reset, you can clear it using an emergency release endpoint:
+The `/api/update` endpoint now triggers a background worker rather than performing the update directly. After authenticating the admin request the endpoint sets the `maintenance` flag and signals the worker, then returns immediately with a response that the update has begun.
+
+The worker runs automatically alongside the backend (`npm run start`) and watches for the trigger file. Once activated it:
+
+1. Sets the maintenance flag using Prisma.
+2. Stops running processes via PM2 (if available).
+3. Executes `git fetch`, `git reset`, `npm ci`, `prisma migrate deploy`, and `npm run build`.
+4. Restarts the processes and clears the maintenance flag.
+
+Monitor progress by watching the worker logs in the terminal or via `pm2 logs` when PM2 is used.
+
+If an update fails and the flag is not reset, you can clear it using an emergency release endpoint:
 
 ```bash
 curl -X POST "http://localhost:3000/api/maintenance/release?secret=YOUR_SECRET"

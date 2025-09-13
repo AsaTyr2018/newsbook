@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "node scripts/clearMaintenance.js && next dev",
+    "dev": "node scripts/clearMaintenance.js && tsx scripts/updateWorker.ts & next dev",
     "build": "next build",
-    "start": "node scripts/clearMaintenance.js && next start",
+    "start": "node scripts/clearMaintenance.js && tsx scripts/updateWorker.ts & next start",
     "lint": "next lint",
     "test": "echo \"No tests specified\" && exit 0",
     "maintenance:release": "node scripts/clearMaintenance.js",
@@ -35,6 +35,7 @@
     "eslint": "^8.48.0",
     "eslint-config-next": "^14.0.0",
     "prisma": "^5.7.0",
+    "tsx": "^4.20.5",
     "typescript": "^5.2.2"
   }
 }
