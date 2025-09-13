@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import Head from 'next/head';
 import '../styles/globals.css';
 import NavBar from '../components/NavBar';
+import ConsentBanner from '../components/ConsentBanner';
 import { SiteContext } from '../lib/SiteContext';
 import { ThemeContext, Theme } from '../lib/ThemeContext';
 import Maintenance from '../components/Maintenance';
@@ -17,6 +18,7 @@ export default function MyApp({ Component, pageProps: { session, ...pageProps } 
   const [maintenance, setMaintenance] = useState(false);
   const [authBaseUrl, setAuthBaseUrl] = useState('');
   const [locale, setLocale] = useState<Locale>('en-EN');
+  const [consented, setConsented] = useState<boolean | null>(null);
 
   useEffect(() => {
     const fetchSettings = () => {
@@ -41,6 +43,7 @@ export default function MyApp({ Component, pageProps: { session, ...pageProps } 
   }, [router.asPath]);
 
   useEffect(() => {
+    if (!consented) return;
     const track = (url: string) => {
       fetch('/api/track', {
         method: 'POST',
@@ -53,7 +56,14 @@ export default function MyApp({ Component, pageProps: { session, ...pageProps } 
     return () => {
       router.events.off('routeChangeComplete', track);
     };
-  }, [router]);
+  }, [router, consented]);
+
+  useEffect(() => {
+    fetch('/api/consent')
+      .then((res) => res.json())
+      .then((data) => setConsented(data.consented))
+      .catch(() => setConsented(false));
+  }, []);
 
   useEffect(() => {
     const stored = (typeof window !== 'undefined' && window.localStorage.getItem('theme')) as Theme | null;
@@ -103,6 +113,21 @@ export default function MyApp({ Component, pageProps: { session, ...pageProps } 
                   <Component {...pageProps} />
                 </main>
               </div>
+              {consented === false && (
+                <ConsentBanner
+                  onAccept={async () => {
+                    await fetch('/api/consent', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ accept: true }),
+                    }).catch(() => {});
+                    setConsented(true);
+                  }}
+                  onDecline={() => {
+                    window.location.href = 'https://www.google.com';
+                  }}
+                />
+              )}
             </div>
           </ThemeContext.Provider>
         </LocaleContext.Provider>

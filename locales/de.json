@@ -128,5 +128,8 @@
   "user_group": "Gruppe:",
   "user_posts_title": "Beiträge",
   "user_posts_none": "Keine Beiträge vorhanden.",
-  "maintenance_message": "Bin gleich zurück..."
+  "maintenance_message": "Bin gleich zurück...",
+  "consent_message": "Wir erheben Nutzungsstatistiken, um Inhalte korrekt darzustellen. Wenn du das ablehnst, kannst du die Seite leider nicht nutzen.",
+  "consent_accept": "Akzeptieren",
+  "consent_decline": "Ablehnen"
 }
