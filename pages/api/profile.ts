@@ -9,6 +9,12 @@ import fs from 'fs';
 import crypto from 'crypto';
 import sharp from 'sharp';
 
+const debug = (...args: any[]) => {
+  if (process.env.DEBUG_AVATAR_UPLOAD) {
+    console.log('[avatar-upload]', ...args);
+  }
+};
+
 export const config = {
   api: { bodyParser: false },
 };
@@ -64,6 +70,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const maxDim = parseInt(configMap.avatarMaxDimension || '1024', 10);
       const minDim = parseInt(configMap.avatarMinDimension || '64', 10);
 
+      debug('config', { allowedFormats, allowedMimes, allowedExts, maxSize, maxDim, minDim });
+
       const form = formidable({ maxFileSize: maxSize, multiples: false });
       const { fields, files } = await new Promise<{ fields: formidable.Fields; files: formidable.Files }>((resolve, reject) => {
         form.parse(req, (err, fields, files) => {
@@ -76,52 +84,69 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const bio = (fields.bio as string) || undefined;
       const file = files.image as formidable.File | undefined;
 
+      debug('parsed form', {
+        fields,
+        file: file
+          ? { originalFilename: file.originalFilename, mimetype: file.mimetype, size: file.size }
+          : null,
+      });
+
       let imagePath: string | undefined;
       if (file) {
-        const fileType = normalizeMime((file.mimetype || '').split(';')[0].toLowerCase());
-        const fileExt = path
-          .extname(file.originalFilename || '')
-          .replace('.', '')
-          .toLowerCase();
-        if (!allowedMimes.includes(fileType) && !allowedExts.includes(fileExt)) {
-          return res.status(400).json({ error: 'Invalid file type' });
-        }
-        if (file.size > maxSize) {
-          return res.status(400).json({ error: 'File too large' });
-        }
+        try {
+          const fileType = normalizeMime((file.mimetype || '').split(';')[0].toLowerCase());
+          const fileExt = path
+            .extname(file.originalFilename || '')
+            .replace('.', '')
+            .toLowerCase();
+          debug('processing file', { fileType, fileExt, size: file.size });
+          if (!allowedMimes.includes(fileType) && !allowedExts.includes(fileExt)) {
+            return res.status(400).json({ error: 'Invalid file type' });
+          }
+          if (file.size > maxSize) {
+            return res.status(400).json({ error: 'File too large' });
+          }
 
-        const mimeToExt: Record<string, string> = {
-          'image/png': 'png',
-          'image/jpeg': 'jpg',
-          'image/jpg': 'jpg',
-          'image/gif': 'gif',
-          'image/webp': 'webp',
-          'image/pjpeg': 'jpg',
-          'image/x-png': 'png',
-        };
-        const ext = mimeToExt[fileType] || mimeToExt[`image/${fileExt}`];
-        if (!ext) {
-          return res.status(400).json({ error: 'Unsupported format' });
+          const mimeToExt: Record<string, string> = {
+            'image/png': 'png',
+            'image/jpeg': 'jpg',
+            'image/jpg': 'jpg',
+            'image/gif': 'gif',
+            'image/webp': 'webp',
+            'image/pjpeg': 'jpg',
+            'image/x-png': 'png',
+          };
+          const ext = mimeToExt[fileType] || mimeToExt[`image/${fileExt}`];
+          if (!ext) {
+            return res.status(400).json({ error: 'Unsupported format' });
+          }
+
+          const metadata = await sharp(file.filepath).metadata();
+          debug('metadata', metadata);
+          if (!metadata.width || metadata.width !== metadata.height || metadata.width < minDim || metadata.width > maxDim) {
+            return res.status(400).json({ error: 'Invalid image dimensions' });
+          }
+
+          const uploadDir = path.join(process.cwd(), 'public', 'avatars');
+          fs.mkdirSync(uploadDir, { recursive: true });
+          const baseName = crypto.randomUUID();
+
+          const sizes = [64, 128, 256];
+          for (const size of sizes) {
+            await sharp(file.filepath)
+              .resize(size, size)
+              .toFile(path.join(uploadDir, `${baseName}_${size}.${ext}`));
+          }
+          fs.unlink(file.filepath, () => {});
+
+          imagePath = `/avatars/${baseName}_256.${ext}`;
+          debug('stored avatar', imagePath);
+        } catch (err) {
+          debug('error processing avatar', err);
+          return res.status(500).json({ error: 'Avatar processing failed' });
         }
-
-        const metadata = await sharp(file.filepath).metadata();
-        if (!metadata.width || metadata.width !== metadata.height || metadata.width < minDim || metadata.width > maxDim) {
-          return res.status(400).json({ error: 'Invalid image dimensions' });
-        }
-
-        const uploadDir = path.join(process.cwd(), 'public', 'avatars');
-        fs.mkdirSync(uploadDir, { recursive: true });
-        const baseName = crypto.randomUUID();
-
-        const sizes = [64, 128, 256];
-        for (const size of sizes) {
-          await sharp(file.filepath)
-            .resize(size, size)
-            .toFile(path.join(uploadDir, `${baseName}_${size}.${ext}`));
-        }
-        fs.unlink(file.filepath, () => {});
-
-        imagePath = `/avatars/${baseName}_256.${ext}`;
+      } else {
+        debug('no file provided');
       }
 
       const data: any = { name, bio };
@@ -130,6 +155,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         where: { id: userId },
         data,
       });
+      debug('user updated', { userId, imagePath });
       return res.json({ status: 'ok', image: imagePath });
     } else {
       const buffers: Uint8Array[] = [];
