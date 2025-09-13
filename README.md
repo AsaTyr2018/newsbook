@@ -40,6 +40,17 @@ npx next dev -H 0.0.0.0 -p 3000
 
 The app will then be available at `http://localhost:3000`.
 
+## Maintenance Mode
+
+When running the `/api/update` endpoint the site enters maintenance mode. If an update
+fails and the flag is not reset, you can clear it using an emergency release endpoint:
+
+```bash
+curl -X POST "http://localhost:3000/api/maintenance/release?secret=YOUR_SECRET"
+```
+
+Set `MAINTENANCE_RELEASE_SECRET` in your environment to protect the endpoint.
+
 ## Admin Test Account
 
 The seed creates an admin user with username `admin` and password `admin`. The admin area is available at `/admin`.
