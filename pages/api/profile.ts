@@ -45,7 +45,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const allowedTypes = (configMap.avatarAllowedFormats ||
         'image/png,image/jpeg,image/jpg,image/gif,image/webp')
         .split(',')
-        .map((t) => t.trim());
+        .map((t) => t.trim().toLowerCase());
       const maxSize = parseInt(configMap.avatarMaxSize || '2', 10) * 1024 * 1024;
       const maxDim = parseInt(configMap.avatarMaxDimension || '1024', 10);
       const minDim = parseInt(configMap.avatarMinDimension || '64', 10);
@@ -64,7 +64,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       let imagePath: string | undefined;
       if (file) {
-        if (!allowedTypes.includes(file.mimetype || '')) {
+        const fileType = (file.mimetype || '').split(';')[0].toLowerCase();
+        if (!allowedTypes.includes(fileType)) {
           return res.status(400).json({ error: 'Invalid file type' });
         }
         if (file.size > maxSize) {
@@ -78,7 +79,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           'image/gif': 'gif',
           'image/webp': 'webp',
         };
-        const ext = mimeToExt[file.mimetype || ''];
+        const ext = mimeToExt[fileType];
         if (!ext) {
           return res.status(400).json({ error: 'Unsupported format' });
         }
